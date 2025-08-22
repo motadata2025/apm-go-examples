@@ -1,0 +1,221 @@
+# =============================================================================
+# OpenTelemetry Zero-Code Go Testing - Git Ignore
+# =============================================================================
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.html
+coverage.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# =============================================================================
+# Environment and Configuration
+# =============================================================================
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+
+# Local configuration overrides
+config.local.yml
+config.local.yaml
+config.local.json
+
+# =============================================================================
+# Logs and Runtime
+# =============================================================================
+
+# Log files
+logs/
+*.log
+*.log.*
+
+# Runtime directories
+pids/
+tmp/
+temp/
+
+# =============================================================================
+# Development Tools
+# =============================================================================
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =============================================================================
+# Docker and Containers
+# =============================================================================
+
+# Docker volumes and data
+docker-data/
+postgres_data/
+mysql_data/
+kafka_data/
+zookeeper_data/
+
+# =============================================================================
+# OpenTelemetry and Monitoring
+# =============================================================================
+
+# OpenTelemetry collector data
+otel-data/
+traces/
+metrics/
+logs/
+
+# Jaeger data
+jaeger-data/
+
+# Prometheus data
+prometheus-data/
+
+# Grafana data
+grafana-data/
+
+# =============================================================================
+# Testing and CI/CD
+# =============================================================================
+
+# Test results
+test-results/
+test-reports/
+junit.xml
+
+# Benchmark results
+benchmark-results/
+*.bench
+
+# =============================================================================
+# Build and Distribution
+# =============================================================================
+
+# Build artifacts
+build/
+target/
+out/
+
+# Distribution packages
+*.tar.gz
+*.zip
+*.deb
+*.rpm
+
+# =============================================================================
+# Security and Secrets
+# =============================================================================
+
+# Private keys and certificates
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+
+# Secret files
+secrets/
+.secrets/
+
+# =============================================================================
+# Database
+# =============================================================================
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Database dumps
+*.sql.gz
+*.dump
+
+# =============================================================================
+# Temporary and Cache
+# =============================================================================
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# Node modules (if any frontend tools)
+node_modules/
+
+# Python cache (if any Python tools)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# =============================================================================
+# Documentation Build
+# =============================================================================
+
+# Generated documentation
+docs/build/
+site/
+
+# =============================================================================
+# Local Development
+# =============================================================================
+
+# Local scripts and notes
+local/
+scratch/
+notes.md
+TODO.md
+
+# Local data files
+data/
+samples/
+
+# =============================================================================
+# Keep These Files
+# =============================================================================
+
+# Keep example files
+!.env.example
+!config.example.yml
+!docker-compose.example.yml
+
+# Keep documentation
+!docs/
+!*.md
+!LICENSE
+
+# Keep scripts
+!scripts/
+!Makefile
+!*/Makefile
