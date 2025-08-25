@@ -1,0 +1,1 @@
+scripts/management/start-db-apps.sh

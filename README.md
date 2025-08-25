@@ -1,190 +1,339 @@
-# OpenTelemetry Zero-Code Instrumentation Testing Platform
+# 🚀 APM Examples - Complete Development Platform
 
 [![Go Version](https://img.shields.io/badge/Go-1.24+-blue.svg)](https://golang.org)
-[![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-Auto--Instrumentation-blue.svg)](https://opentelemetry.io/)
+[![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-Ready-blue.svg)](https://opentelemetry.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/nikunj-katariya/otel-zero-code-go-testing)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/nikunj-katariya/apm-examples)
 
-A comprehensive testing platform for **OpenTelemetry Zero-Code Auto Instrumentation** in Go applications. This project demonstrates the four core libraries currently supported by OpenTelemetry's automatic instrumentation: **Database/SQL**, **gRPC**, **HTTP/REST**, and **Kafka** - providing a complete testing environment for observability without code changes.
+**A production-ready, zero-configuration development platform** featuring Go microservices with **Database**, **gRPC**, **HTTP/REST**, and **Kafka** integration. Perfect for testing **OpenTelemetry Auto-Instrumentation**, learning microservices architecture, or rapid prototyping.
 
-## � **Purpose: OpenTelemetry Zero-Code Testing**
+> 📚 **New here?** Check out our **[Complete Documentation Index](./DOCUMENTATION-INDEX.md)** for guided navigation through all features and guides!
 
-This platform is specifically designed to test **OpenTelemetry's Zero-Code Auto Instrumentation** capabilities in Go. It covers all four libraries currently supported by OpenTelemetry automatic instrumentation:
-
-1. **Database/SQL** - PostgreSQL & MySQL operations
-2. **gRPC** - High-performance RPC communication
-3. **HTTP/REST** - Web API interactions
-4. **Kafka** - Event streaming and messaging
-
-## �🏗️ **Architecture Overview**
-
-This platform consists of four interconnected microservices that demonstrate OpenTelemetry auto-instrumentation across different communication patterns:
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   HTTP REST     │    │   gRPC Service  │    │  Database SQL   │
-│   Gateway       │◄──►│   gRPC: 50051   │    │  (PostgreSQL +  │
-│   Port: 8084    │    │   HTTP: 8083    │    │   MySQL)        │
-│                 │    │                 │    │   Port: 8081    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │              ┌─────────────────┐              │
-         └──────────────►│ Kafka Platform  │◄─────────────┘
-                        │ Producer: 8082  │
-                        │ Broker: 9092    │
-                        └─────────────────┘
-```
-
-## 🚀 **Services**
-
-| Service | Port | Description | Tech Stack |
-|---------|------|-------------|------------|
-| **[HTTP REST](./http-rest/)** | 8084 | API Gateway & Control Plane | Go, HTTP/JSON, Middleware |
-| **[gRPC Service](./grpc-svc/)** | 50051/8083 | High-performance RPC | Go, gRPC, Protocol Buffers |
-| **[Database SQL](./db-sql-multi/)** | 8081 | Multi-database operations | Go, PostgreSQL, MySQL |
-| **[Kafka Platform](./kafka-segmentio/)** | 8082 | Event streaming & messaging | Go, Apache Kafka, Docker |
-
-## 🎯 **Key Features**
-
-- **🔄 Microservices Architecture**: Loosely coupled, independently deployable services
-- **📊 Multi-Database Support**: PostgreSQL and MySQL integration with connection pooling
-- **🚀 High-Performance RPC**: gRPC with Protocol Buffers for efficient communication
-- **📨 Event-Driven Architecture**: Apache Kafka for asynchronous messaging
-- **🔍 OpenTelemetry Ready**: Zero-code auto instrumentation testing platform
-- **🐳 Container Support**: Docker Compose for local development
-- **⚡ Production Ready**: Comprehensive Makefiles with cross-platform builds
-- **🛡️ Crash-Safe Deployment**: Background service management with auto-restart
-
-## 🚀 **Quick Start**
-
-### Prerequisites
-
-- **Go 1.24+** - [Download](https://golang.org/dl/)
-- **Docker & Docker Compose** - [Install](https://docs.docker.com/get-docker/)
-- **Make** - Build automation tool
-- **PostgreSQL** - Database server
-- **MySQL** - Database server
-
-### One-Command Setup
+## ⚡ **30-Second Quick Start**
 
 ```bash
-# Clone the repository
+# 1. Clone and enter directory
 git clone https://github.com/your-org/apm-examples.git
 cd apm-examples
 
-# Start everything (infrastructure + build + deploy)
-make quick-start
+# 2. One command to rule them all! 🚀
+./quick-start.sh
+
+# 3. Test your endpoints
+curl http://localhost:8001/trigger-crud    # Database operations
+curl http://localhost:8002/trigger-produce # Kafka messaging
 ```
 
-This will:
-1. 🐳 Start Kafka infrastructure with Docker
-2. 🔨 Build all services for your platform
-3. 🚀 Deploy all services in background (crash-safe)
-4. ✅ Verify health of all components
+**That's it!** Your complete microservices platform is running with databases, message queues, and all services ready to use.
 
-### Verify Installation
+---
+
+## 🎯 **What You Get**
+
+### **🏗️ Complete Infrastructure**
+- **PostgreSQL** & **MySQL** databases with sample data
+- **Apache Kafka** message queue with auto-created topics
+- **Adminer** web-based database admin interface
+- **Zero configuration** - everything works out of the box
+
+### **🚀 Production-Ready Services**
+- **Database Service** - Multi-database CRUD operations
+- **gRPC Service** - High-performance RPC communication
+- **HTTP REST API** - RESTful web services
+- **Kafka Services** - Event streaming and messaging
+
+### **🛠️ Developer Tools**
+- **Intelligent port management** - No more port conflicts
+- **Health monitoring** - Real-time service status
+- **Comprehensive logging** - Debug with ease
+- **Public access ready** - Share your work instantly
+
+---
+
+## 📊 **Architecture Overview**
+
+```
+🌐 Public Access (Your Machine IP: 10.128.22.89)
+│
+├── 🔧 Database Operations    → http://10.128.22.89:8001/trigger-crud
+├── 📨 Kafka Messaging       → http://10.128.22.89:8002/trigger-produce
+├── 🚀 gRPC Services         → http://10.128.22.89:8003/health
+└── 🌍 HTTP REST API         → http://10.128.22.89:8004/books
+
+🏗️ Infrastructure (Internal)
+├── 📊 PostgreSQL            → localhost:5432 (testuser/Test@1234/testdb)
+├── 📊 MySQL                 → localhost:3306 (testuser/Test@1234/testdb)
+├── 📨 Kafka Broker          → localhost:9092
+└── 🔧 Database Admin        → http://localhost:8080
+```
+---
+
+## � **Getting Started**
+
+### **Prerequisites**
+- **Go 1.21+** ([Download](https://golang.org/dl/))
+- **Docker & Docker Compose** ([Install](https://docs.docker.com/get-docker/))
+- **Git** (for cloning)
+
+### **Option 1: Zero-Config Quick Start (Recommended)**
 
 ```bash
-# Check all services status
-make status
+# 1. Clone the repository
+git clone https://github.com/your-org/apm-examples.git
+cd apm-examples
 
-# Test the platform
-curl http://localhost:8084/books                    # HTTP REST API
-curl http://localhost:8082/trigger-produce          # Kafka Producer
-curl http://localhost:8081/trigger-crud             # Database Operations
-grpcurl -plaintext localhost:50051 list             # gRPC Service
-curl http://localhost:8083/health                   # gRPC HTTP Interface
+# 2. Run the magic script! ✨
+./quick-start.sh
 ```
+
+**What happens:**
+- ✅ Automatically detects and fixes port conflicts
+- ✅ Starts PostgreSQL, MySQL, and Kafka infrastructure
+- ✅ Initializes databases with sample data
+- ✅ Starts all applications with intelligent port allocation
+- ✅ Provides you with working URLs
+
+### **Option 2: Step-by-Step Setup**
+
+```bash
+# 1. Start infrastructure only
+make infra-only
+
+# 2. Start database applications
+./start-db-apps.sh
+
+# 3. Check status
+./status-db-apps.sh
+```
+
+### **Option 3: Public Access Setup**
+
+```bash
+# Make your endpoints accessible from other devices
+./setup-machine-ip-access.sh
+./start-machine-ip-apps.sh
+
+# Your endpoints will be available at:
+# http://YOUR_MACHINE_IP:PORT/endpoint
+```
+
+---
+
+## 🧪 **Testing Your Setup**
+
+### **Quick Health Check**
+```bash
+# Check all services
+./status-db-apps.sh
+
+# Test database operations
+curl http://localhost:8001/trigger-crud
+
+# Test Kafka messaging
+curl http://localhost:8002/trigger-produce
+```
+
+### **Detailed Testing**
+```bash
+# Comprehensive endpoint testing
+./test-machine-ip-apps.sh
+
+# Check infrastructure
+make infra-status
+
+# View logs
+tail -f logs/*.log
+```
+
+---
 
 ## 📖 **Usage Examples**
 
-### API Gateway (HTTP REST)
+### **🔧 Database Operations**
 ```bash
-# Create a book
-curl -X POST http://localhost:8084/books \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Go Microservices","author":"John Doe"}'
+# Test multi-database CRUD operations
+curl http://localhost:8001/trigger-crud
 
-# Trigger all services
-curl http://localhost:8084/trigger/allservices
+# Expected response:
+# {"message":"Database operation completed successfully"}
+
+# Check database content via Adminer
+open http://localhost:8080
 ```
 
-### Event Streaming (Kafka)
+### **📨 Kafka Messaging**
 ```bash
-# Produce messages
-curl http://localhost:8082/trigger-produce
+# Produce messages to Kafka
+curl http://localhost:8002/trigger-produce
 
 # Check consumer logs
-make -C kafka-segmentio logs-consumer
+tail -f logs/kafka-consumer.log
+
+# View Kafka topics
+docker exec apm-kafka kafka-topics --bootstrap-server localhost:9092 --list
 ```
 
-### Database Operations
+### **🚀 gRPC Services**
 ```bash
-# Trigger CRUD operations on both PostgreSQL and MySQL
-curl http://localhost:8081/trigger-crud
-```
+# Check gRPC health
+curl http://localhost:8003/health
 
-### gRPC Communication
-```bash
-# List available services
+# List gRPC services (requires grpcurl)
 grpcurl -plaintext localhost:50051 list
 
-# Call unary RPC
+# Call gRPC method
 grpcurl -plaintext -d '{"msg":"Hello"}' localhost:50051 echo.v1.EchoService/Say
 ```
 
-## 🛠️ **Development**
-
-### Individual Service Development
+### **🌍 HTTP REST API**
 ```bash
-# Work on a specific service
-cd http-rest
-make help                    # See all available commands
-make run                     # Run locally
-make test                    # Run tests
-make build-dev              # Development build
+# Test REST endpoints
+curl http://localhost:8004/books
+
+# Create a new book
+curl -X POST http://localhost:8004/books \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Go Microservices","author":"John Doe"}'
 ```
 
-### Cross-Platform Builds
-```bash
-# Build for all platforms (Linux, macOS, Windows - amd64/arm64)
-make cross-build
+---
 
-# Create distribution packages
-make dist
+## 🛠️ **Management & Operations**
+
+### **🎮 Service Management**
+```bash
+# Start all services
+./start-db-apps.sh              # Database applications
+./start-machine-ip-apps.sh      # Public access applications
+
+# Check status
+./status-db-apps.sh             # Detailed status with health checks
+./status-machine-ip-apps.sh     # Public access status
+
+# Stop services
+./stop-db-apps.sh               # Stop applications
+./stop-machine-ip-apps.sh       # Stop public applications
+
+# Restart services
+./restart-db-apps.sh            # Restart all applications
 ```
 
-### Infrastructure Management
+### **🔧 Infrastructure Management**
 ```bash
-# Start only infrastructure
-make infra-up
+# Infrastructure only
+make infra-only                 # Start PostgreSQL, MySQL, Kafka
+make infra-stop                 # Stop infrastructure
+make infra-clean                # Stop and remove all data
 
-# Stop everything
-make clean-all
-
-# View logs from all services
-make logs
+# Legacy full setup
+make quick-start                # Full Docker setup
+make host                       # Build and start everything
+make clean-all                  # Complete cleanup
 ```
 
-## 🔧 **Configuration**
-
-Each service supports environment-based configuration. Copy the example files and customize:
-
+### **📊 Monitoring & Debugging**
 ```bash
-# Database service
-cp db-sql-multi/.env.example db-sql-multi/.env
+# Real-time monitoring
+./status-db-apps.sh             # Service status
+tail -f logs/*.log              # Application logs
+docker logs apm-postgres        # Database logs
+docker logs apm-kafka           # Kafka logs
 
-# Kafka service
-cp kafka-segmentio/.env.example kafka-segmentio/.env
+# Health checks
+curl http://localhost:8001/health    # Database service
+curl http://localhost:8002/health    # Kafka service
+curl http://localhost:8003/health    # gRPC service
 
-# HTTP REST service
-cp http-rest/.env.example http-rest/.env
-
-# gRPC service
-cp grpc-svc/.env.example grpc-svc/.env
+# Port information
+lsof -i :8001                   # Check what's using port 8001
+netstat -tlnp | grep 8001       # Alternative port check
 ```
 
-See individual service READMEs for detailed configuration options.
+---
+
+## 🚨 **Troubleshooting**
+
+### **Common Issues & Solutions**
+
+#### **🔴 Port Conflicts**
+```bash
+# Problem: "address already in use"
+# Solution: Use the automatic fix
+./fix-db-issues.sh ports
+
+# Or manually check what's using the port
+lsof -i :8001
+kill <PID>  # Kill the conflicting process
+```
+
+#### **🔴 Database Connection Issues**
+```bash
+# Problem: Database connection failed
+# Solution: Comprehensive fix
+./fix-db-issues.sh db
+
+# Or restart infrastructure
+make infra-clean
+make infra-only
+```
+
+#### **🔴 Services Won't Start**
+```bash
+# Problem: Applications fail to start
+# Solution: Complete diagnostic and fix
+./fix-db-issues.sh
+
+# Check logs for specific errors
+tail -f logs/db-sql-multi.log
+```
+
+### **🆘 Emergency Recovery**
+```bash
+# Nuclear option - reset everything
+./stop-db-apps.sh
+make infra-clean
+./fix-db-issues.sh
+make infra-only
+./start-db-apps.sh
+```
+
+---
+
+## 🎯 **Advanced Usage**
+
+### **🌐 Public Access Configuration**
+```bash
+# Make endpoints accessible from internet
+./setup-public-endpoints.sh     # Configure for public access
+./start-public-apps.sh          # Start with public bindings
+./test-public-apps.sh           # Test public accessibility
+
+# Machine IP access (same network)
+./setup-machine-ip-access.sh    # Configure for network access
+./start-machine-ip-apps.sh      # Start with machine IP
+./test-machine-ip-apps.sh       # Test network accessibility
+```
+
+### **🔒 Security Setup**
+```bash
+# Add security measures
+./secure-public-services.sh     # Install fail2ban, rate limiting
+./monitor-public-access.sh      # Monitor access logs
+```
+
+### **🏗️ Development Workflow**
+```bash
+# Individual service development
+cd db-sql-multi
+make help                       # See all available commands
+make run                        # Run locally
+make test                       # Run tests
+make build-dev                  # Development build
+
+# Cross-platform builds
+make cross-build                # All platforms
+make dist                       # Distribution packages
+```
 
 ## 📊 **Monitoring & Observability**
 

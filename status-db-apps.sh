@@ -1,0 +1,1 @@
+scripts/management/status-db-apps.sh

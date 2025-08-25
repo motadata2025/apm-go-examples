@@ -4,13 +4,13 @@
 
 # Project configuration
 PROJECT_NAME := apm-examples
-SERVICES := db-sql-multi grpc-svc http-rest kafka-segmentio
+SERVICES := services/db-sql-multi services/grpc-svc services/http-rest services/kafka-segmentio
 
 # Service directories and ports
-DB_SQL_DIR := db-sql-multi
-GRPC_DIR := grpc-svc
-HTTP_DIR := http-rest
-KAFKA_DIR := kafka-segmentio
+DB_SQL_DIR := services/db-sql-multi
+GRPC_DIR := services/grpc-svc
+HTTP_DIR := services/http-rest
+KAFKA_DIR := services/kafka-segmentio
 
 # Service ports
 DB_SQL_PORT := 8081
@@ -40,31 +40,41 @@ RESET := \033[0m
 
 .PHONY: help
 help: ## Show this help message
-	@echo "$(CYAN)$(PROJECT_NAME) - Master Makefile$(RESET)"
+	@echo "$(CYAN)🚀 APM Examples - Complete Development Platform$(RESET)"
 	@echo ""
-	@echo "$(YELLOW)Build targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(build|cross|dist)"
+	@echo "$(BLUE)🎯 QUICK START (Recommended):$(RESET)"
+	@echo "  $(GREEN)./quick-start.sh$(RESET)         🚀 Zero-config setup - Run this first!"
+	@echo "  $(GREEN)./start-db-apps.sh$(RESET)       Start database applications"
+	@echo "  $(GREEN)./status-db-apps.sh$(RESET)      Check application status"
 	@echo ""
-	@echo "$(YELLOW)Development targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(run|dev|test|fmt|lint)"
+	@echo "$(BLUE)🌐 PUBLIC ACCESS:$(RESET)"
+	@echo "  $(GREEN)./setup-machine-ip-access.sh$(RESET)  Configure for network access"
+	@echo "  $(GREEN)./start-machine-ip-apps.sh$(RESET)    Start with machine IP"
+	@echo "  $(GREEN)./test-machine-ip-apps.sh$(RESET)     Test network accessibility"
 	@echo ""
-	@echo "$(YELLOW)Infrastructure targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(infra|docker|kafka)"
+	@echo "$(BLUE)🔧 INFRASTRUCTURE:$(RESET)"
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-25s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(infra|docker)"
 	@echo ""
-	@echo "$(YELLOW)Service management:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(host|start|stop|restart|status)"
+	@echo "$(BLUE)🛠️ BUILD & DEVELOPMENT:$(RESET)"
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-25s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(build|cross|dist|test|fmt|lint)"
 	@echo ""
-	@echo "$(YELLOW)Utility targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(clean|deps|mod|install|health)"
+	@echo "$(BLUE)🎮 SERVICE MANAGEMENT:$(RESET)"
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-25s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(host|start|stop|restart|status|health)"
 	@echo ""
-	@echo "$(YELLOW)Services:$(RESET)"
-	@echo "  $(MAGENTA)db-sql-multi$(RESET)     Database service (PostgreSQL & MySQL) - Port 8081"
-	@echo "  $(MAGENTA)grpc-svc$(RESET)         gRPC server (50051) and HTTP client (8083)"
-	@echo "  $(MAGENTA)http-rest$(RESET)        HTTP REST API service - Port 8084"
-	@echo "  $(MAGENTA)kafka-segmentio$(RESET)  Kafka producer/consumer - Port 8082"
+	@echo "$(BLUE)🧹 UTILITIES:$(RESET)"
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-25s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(clean|deps|mod|install|fix)"
 	@echo ""
-	@echo "$(YELLOW)Individual service help:$(RESET)"
-	@echo "  $(GREEN)make -C <service> help$(RESET)  Show help for specific service"
+	@echo "$(YELLOW)📊 CURRENT SERVICES:$(RESET)"
+	@echo "  $(MAGENTA)Database Service$(RESET)     Multi-database operations (PostgreSQL & MySQL)"
+	@echo "  $(MAGENTA)gRPC Service$(RESET)         High-performance RPC communication"
+	@echo "  $(MAGENTA)HTTP REST API$(RESET)        RESTful web services"
+	@echo "  $(MAGENTA)Kafka Services$(RESET)       Event streaming and messaging"
+	@echo ""
+	@echo "$(CYAN)💡 TIPS:$(RESET)"
+	@echo "  • Start with: $(GREEN)./quick-start.sh$(RESET)"
+	@echo "  • For network access: $(GREEN)./setup-machine-ip-access.sh$(RESET)"
+	@echo "  • Troubleshooting: $(GREEN)./fix-db-issues.sh$(RESET)"
+	@echo "  • Individual service help: $(GREEN)make -C <service> help$(RESET)"
 
 # =============================================================================
 # Setup and Dependencies
@@ -368,20 +378,61 @@ uninstall: ## Remove all service binaries from GOPATH/bin
 # Quick Start Targets
 # =============================================================================
 
+# =============================================================================
+# Quick Start and Management Targets
+# =============================================================================
+
 .PHONY: quick-start
 quick-start: ## 🚀 ZERO-CONFIG SETUP: Run this for instant setup!
 	@echo "$(CYAN)🚀 APM Examples - Zero-Config Quick Start$(RESET)"
 	@echo ""
 	@./quick-start.sh
 
+.PHONY: start-apps
+start-apps: ## Start database applications with intelligent port management
+	@echo "$(BLUE)Starting database applications...$(RESET)"
+	@./start-db-apps.sh
+
+.PHONY: stop-apps
+stop-apps: ## Stop all database applications
+	@echo "$(BLUE)Stopping database applications...$(RESET)"
+	@./stop-db-apps.sh
+
+.PHONY: restart-apps
+restart-apps: ## Restart all database applications
+	@echo "$(BLUE)Restarting database applications...$(RESET)"
+	@./restart-db-apps.sh
+
+.PHONY: status-apps
+status-apps: ## Check status of all database applications
+	@./status-db-apps.sh
+
+.PHONY: setup-public
+setup-public: ## Setup public access for endpoints
+	@echo "$(BLUE)Setting up public access...$(RESET)"
+	@./setup-machine-ip-access.sh
+
+.PHONY: start-public
+start-public: ## Start applications with public/network access
+	@echo "$(BLUE)Starting applications with public access...$(RESET)"
+	@./start-machine-ip-apps.sh
+
+.PHONY: test-public
+test-public: ## Test public endpoint accessibility
+	@./test-machine-ip-apps.sh
+
+.PHONY: fix-issues
+fix-issues: ## 🔧 Comprehensive fix for all common issues
+	@./fix-db-issues.sh
+
 .PHONY: fix-ports
-fix-ports: ## 🔧 Fix port conflicts automatically
-	@./fix-ports.sh
+fix-ports: ## 🔧 Fix port conflicts only
+	@./fix-db-issues.sh ports
 
 .PHONY: infra-only
 infra-only: ## Start only infrastructure (PostgreSQL, MySQL, Kafka)
 	@echo "$(BLUE)Starting minimal infrastructure...$(RESET)"
-	@docker compose -f docker-compose.minimal.yml up -d
+	@docker compose -f infrastructure/docker-compose.minimal.yml up -d
 	@echo "$(GREEN)✓ Infrastructure started$(RESET)"
 	@echo ""
 	@echo "$(CYAN)Services available:$(RESET)"
@@ -393,13 +444,13 @@ infra-only: ## Start only infrastructure (PostgreSQL, MySQL, Kafka)
 .PHONY: infra-stop
 infra-stop: ## Stop infrastructure services
 	@echo "$(BLUE)Stopping infrastructure...$(RESET)"
-	@docker compose -f docker-compose.minimal.yml stop
+	@docker compose -f infrastructure/docker-compose.minimal.yml stop
 	@echo "$(GREEN)✓ Infrastructure stopped$(RESET)"
 
 .PHONY: infra-clean
 infra-clean: ## Stop and remove infrastructure
 	@echo "$(BLUE)Cleaning infrastructure...$(RESET)"
-	@docker compose -f docker-compose.minimal.yml down --volumes
+	@docker compose -f infrastructure/docker-compose.minimal.yml down --volumes
 	@echo "$(GREEN)✓ Infrastructure cleaned$(RESET)"
 
 .PHONY: legacy-quick-start

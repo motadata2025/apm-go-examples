@@ -1,0 +1,1 @@
+scripts/management/restart-db-apps.sh
