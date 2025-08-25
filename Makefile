@@ -369,8 +369,42 @@ uninstall: ## Remove all service binaries from GOPATH/bin
 # =============================================================================
 
 .PHONY: quick-start
-quick-start: ## Quick start: setup infrastructure and host all services
-	@echo "$(CYAN)Quick Start - APM Examples$(RESET)"
+quick-start: ## 🚀 ZERO-CONFIG SETUP: Run this for instant setup!
+	@echo "$(CYAN)🚀 APM Examples - Zero-Config Quick Start$(RESET)"
+	@echo ""
+	@./quick-start.sh
+
+.PHONY: fix-ports
+fix-ports: ## 🔧 Fix port conflicts automatically
+	@./fix-ports.sh
+
+.PHONY: infra-only
+infra-only: ## Start only infrastructure (PostgreSQL, MySQL, Kafka)
+	@echo "$(BLUE)Starting minimal infrastructure...$(RESET)"
+	@docker compose -f docker-compose.minimal.yml up -d
+	@echo "$(GREEN)✓ Infrastructure started$(RESET)"
+	@echo ""
+	@echo "$(CYAN)Services available:$(RESET)"
+	@echo "  PostgreSQL: localhost:5432 (testuser/Test@1234/testdb)"
+	@echo "  MySQL:      localhost:3306 (testuser/Test@1234/testdb)"
+	@echo "  Kafka:      localhost:9092"
+	@echo "  Adminer:    http://localhost:8080"
+
+.PHONY: infra-stop
+infra-stop: ## Stop infrastructure services
+	@echo "$(BLUE)Stopping infrastructure...$(RESET)"
+	@docker compose -f docker-compose.minimal.yml stop
+	@echo "$(GREEN)✓ Infrastructure stopped$(RESET)"
+
+.PHONY: infra-clean
+infra-clean: ## Stop and remove infrastructure
+	@echo "$(BLUE)Cleaning infrastructure...$(RESET)"
+	@docker compose -f docker-compose.minimal.yml down --volumes
+	@echo "$(GREEN)✓ Infrastructure cleaned$(RESET)"
+
+.PHONY: legacy-quick-start
+legacy-quick-start: ## Legacy quick start with full Docker setup
+	@echo "$(CYAN)Legacy Quick Start - APM Examples$(RESET)"
 	@echo ""
 	@echo "$(BLUE)Step 1: Setting up infrastructure...$(RESET)"
 	@$(MAKE) infra-up
