@@ -24,10 +24,10 @@ KAFKA_CONSUMER_PATH="$MULTI_SET_ROOT/cmd/kafka-consumer"
 HTTP_REST_PATH="$MULTI_SET_ROOT/cmd/http-rest"
 
 # Original service paths for go.mod dependencies
-ORIG_DB_SQL_PATH="$PROJECT_ROOT/db-sql-multi"
-ORIG_GRPC_SVC_PATH="$PROJECT_ROOT/grpc-svc"
-ORIG_KAFKA_PATH="$PROJECT_ROOT/kafka-segmentio"
-ORIG_HTTP_REST_PATH="$PROJECT_ROOT/http-rest"
+ORIG_DB_SQL_PATH="$PROJECT_ROOT/../services/db-sql-multi"
+ORIG_GRPC_SVC_PATH="$PROJECT_ROOT/../services/grpc-svc"
+ORIG_KAFKA_PATH="$PROJECT_ROOT/../services/kafka-segmentio"
+ORIG_HTTP_REST_PATH="$PROJECT_ROOT/../services/http-rest"
 
 # Build specific base or all bases
 if [ -n "${BASE:-}" ]; then

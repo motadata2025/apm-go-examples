@@ -336,7 +336,7 @@ ports: ## Show all service ports and endpoints
 ps: ## Show running processes for all services
 	@echo "$(BLUE)Checking running processes...$(RESET)"
 	@echo ""
-	@./check-services.sh 2>/dev/null || echo "$(YELLOW)check-services.sh not found or not executable$(RESET)"
+	@./tools/monitoring/check-services.sh 2>/dev/null || echo "$(YELLOW)check-services.sh not found or not executable$(RESET)"
 
 # =============================================================================
 # Utility Targets

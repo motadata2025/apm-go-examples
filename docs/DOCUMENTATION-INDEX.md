@@ -87,9 +87,15 @@ cd apm-examples
 ./setup-machine-ip-access.sh        # Network access setup
 
 # Status & Monitoring
+./tools/monitoring/check-services.sh  # Expert service monitoring
 ./status-db-apps.sh                 # Application status
 ./test-machine-ip-apps.sh           # Test network access
 make help                           # All available commands
+
+# Expert Tools & Reports
+./quick-start-expert.sh             # Expert automation setup
+../COMPREHENSIVE_TEST_REPORT.md     # Complete testing results (94 tests)
+../EXPERT-FIXES-SUMMARY.md          # Expert-level improvements
 
 # Troubleshooting
 ./fix-db-issues.sh                  # Fix all issues

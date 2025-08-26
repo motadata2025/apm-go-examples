@@ -1,4 +1,12 @@
 #!/bin/bash
+
+# =============================================================================
+# APM Examples - Expert Quick Start Script
+# =============================================================================
+# Professional setup with intelligent port management and crash-safe services
+# Features: Docker conflict detection, service health monitoring, auto-recovery
+# Run with: ./quick-start.sh
+
 set -euo pipefail
 
 # Colors for output
@@ -7,48 +15,123 @@ GREEN='\033[32m'
 YELLOW='\033[33m'
 BLUE='\033[34m'
 CYAN='\033[36m'
+MAGENTA='\033[35m'
 RESET='\033[0m'
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_NAME="APM Examples"
+LOG_FILE="$SCRIPT_DIR/logs/quick-start.log"
 
-echo -e "${CYAN}🚀 ${PROJECT_NAME} - Quick Start Setup${RESET}"
-echo -e "${BLUE}================================================${RESET}"
+# Service configuration
+SERVICES=("db-sql-multi" "grpc-svc" "http-rest" "kafka-segmentio")
+DOCKER_PORTS=(5432 3306 9092 2181)
+SERVICE_PORTS=(8081 50051 8083 8084 8082)
+
+# Ensure logs directory exists
+mkdir -p "$(dirname "$LOG_FILE")"
+
+echo -e "${CYAN}🚀 ${PROJECT_NAME} - Expert Quick Start Setup${RESET}"
+echo -e "${BLUE}================================================================${RESET}"
+echo -e "${MAGENTA}Professional APM Testing Platform with Crash-Safe Services${RESET}"
 echo ""
 
-# Function to check if command exists
+# =============================================================================
+# Expert Helper Functions
+# =============================================================================
+
+log() {
+    echo -e "${BLUE}[$(date +'%H:%M:%S')]${RESET} $1" | tee -a "$LOG_FILE"
+}
+
+success() {
+    echo -e "${GREEN}✓${RESET} $1" | tee -a "$LOG_FILE"
+}
+
+warning() {
+    echo -e "${YELLOW}⚠${RESET} $1" | tee -a "$LOG_FILE"
+}
+
+error() {
+    echo -e "${RED}✗${RESET} $1" | tee -a "$LOG_FILE"
+}
+
 command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Function to check if port is available
-port_available() {
-    ! nc -z localhost "$1" 2>/dev/null
+# Intelligent port checking - distinguishes between Docker and host services
+check_port_conflict() {
+    local port=$1
+    local service_name=$2
+
+    # Check if port is used by Docker containers (this is OK)
+    if docker ps --format "table {{.Names}}\t{{.Ports}}" 2>/dev/null | grep -q ":$port->"; then
+        log "Port $port is used by Docker container (expected for $service_name)"
+        return 0
+    fi
+
+    # Check if port is used by host processes (potential conflict)
+    if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+        local process=$(lsof -Pi :$port -sTCP:LISTEN | tail -n1 | awk '{print $1}')
+        warning "Port $port is used by host process: $process"
+        return 1
+    fi
+
+    success "Port $port is available for $service_name"
+    return 0
 }
 
-# Function to wait for service
+# Wait for service to be healthy with timeout
 wait_for_service() {
-    local service="$1"
-    local port="$2"
-    local max_attempts=30
-    local attempt=1
-    
-    echo -e "${YELLOW}Waiting for $service on port $port...${RESET}"
-    
-    while [ $attempt -le $max_attempts ]; do
-        if nc -z localhost "$port" 2>/dev/null; then
-            echo -e "${GREEN}✓ $service is ready!${RESET}"
+    local service_name=$1
+    local health_check=$2
+    local timeout=${3:-30}
+    local interval=2
+    local elapsed=0
+
+    log "Waiting for $service_name to be healthy..."
+
+    while [ $elapsed -lt $timeout ]; do
+        if eval "$health_check" >/dev/null 2>&1; then
+            success "$service_name is healthy"
             return 0
         fi
-        
+        sleep $interval
+        elapsed=$((elapsed + interval))
         echo -n "."
-        sleep 2
-        attempt=$((attempt + 1))
     done
-    
-    echo -e "${RED}✗ $service failed to start within $((max_attempts * 2)) seconds${RESET}"
+
+    echo ""
+    error "$service_name failed to become healthy within ${timeout}s"
     return 1
+}
+
+# Expert Kafka setup with proper container management
+setup_kafka_expert() {
+    log "Setting up Kafka infrastructure with expert configuration..."
+
+    # Use minimal Docker Compose for infrastructure only
+    if [ -f "infrastructure/docker-compose.minimal.yml" ]; then
+        cd infrastructure
+        docker compose -f docker-compose.minimal.yml up -d
+        cd ..
+    else
+        # Fallback to kafka-segmentio directory
+        cd kafka-segmentio
+        docker compose up -d
+        cd ..
+    fi
+
+    # Wait for Kafka to be ready with proper health checks
+    wait_for_service "Zookeeper" "docker exec \$(docker ps -q -f name=zookeeper) zkServer.sh status" 30
+    wait_for_service "Kafka" "docker exec \$(docker ps -q -f name=kafka) kafka-broker-api-versions --bootstrap-server localhost:9092" 45
+
+    # Create topics with expert configuration
+    log "Creating Kafka topics with optimal configuration..."
+    make -C kafka-segmentio kafka-topics-create || warning "Topics may already exist"
+
+    success "Kafka infrastructure ready"
 }
 
 # Check prerequisites
@@ -153,7 +236,7 @@ echo ""
 echo -e "${BLUE}Step 6: Building Go applications...${RESET}"
 
 # Build each service
-for service in services/db-sql-multi grpc-svc kafka-segmentio http-rest; do
+for service in services/db-sql-multi services/grpc-svc services/kafka-segmentio services/http-rest; do
     echo -e "${YELLOW}Building $service...${RESET}"
     cd "$SCRIPT_DIR/$service"
     make build 2>/dev/null || go mod tidy && go build -o bin/ ./cmd/...
