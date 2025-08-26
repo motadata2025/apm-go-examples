@@ -173,6 +173,149 @@ run-bg: build ## Run the application in background
 	@echo "$(GREEN)✓ $(BINARY_NAME) started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME).pid))$(RESET)"
 	@echo "$(YELLOW)Service available on port $(SERVICE_PORT)$(RESET)"
 
+.PHONY: run-bg-dev
+run-bg-dev: build-dev ## Run development build in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-dev in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-dev > $(LOGS_DIR)/$(BINARY_NAME)-dev.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-dev.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-dev > $(LOGS_DIR)/$(BINARY_NAME)-dev.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-dev.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-dev started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-dev.pid))$(RESET)"
+	@echo "$(YELLOW)Development service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-static
+run-bg-static: ## Run static build in background (requires build-static to be run first)
+	@echo "$(BLUE)Starting $(BINARY_NAME)-static in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-static > $(LOGS_DIR)/$(BINARY_NAME)-static.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-static.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-static > $(LOGS_DIR)/$(BINARY_NAME)-static.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-static.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-static started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-static.pid))$(RESET)"
+	@echo "$(YELLOW)Static service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-dynamic
+run-bg-dynamic: ## Run dynamic build in background (requires build-dynamic to be run first)
+	@echo "$(BLUE)Starting $(BINARY_NAME)-dynamic in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-dynamic > $(LOGS_DIR)/$(BINARY_NAME)-dynamic.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-dynamic.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-dynamic > $(LOGS_DIR)/$(BINARY_NAME)-dynamic.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-dynamic.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-dynamic started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-dynamic.pid))$(RESET)"
+	@echo "$(YELLOW)Dynamic service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-cgo
+run-bg-cgo: ## Run CGO build in background (requires build-cgo to be run first)
+	@echo "$(BLUE)Starting $(BINARY_NAME)-cgo in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-cgo > $(LOGS_DIR)/$(BINARY_NAME)-cgo.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-cgo.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-cgo > $(LOGS_DIR)/$(BINARY_NAME)-cgo.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-cgo.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-cgo started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-cgo.pid))$(RESET)"
+	@echo "$(YELLOW)CGO service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-debug
+run-bg-debug: ## Run debug build in background (requires build-ldflags to be run first)
+	@echo "$(BLUE)Starting $(BINARY_NAME)-debug in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-debug > $(LOGS_DIR)/$(BINARY_NAME)-debug.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-debug.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-debug > $(LOGS_DIR)/$(BINARY_NAME)-debug.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-debug.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-debug started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-debug.pid))$(RESET)"
+	@echo "$(YELLOW)Debug service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-optimized
+run-bg-optimized: ## Run optimized build in background (requires build-ldflags to be run first)
+	@echo "$(BLUE)Starting $(BINARY_NAME)-optimized in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-optimized > $(LOGS_DIR)/$(BINARY_NAME)-optimized.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-optimized.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-optimized > $(LOGS_DIR)/$(BINARY_NAME)-optimized.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-optimized.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-optimized started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-optimized.pid))$(RESET)"
+	@echo "$(YELLOW)Optimized service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-profile
+run-bg-profile: ## Run profile build in background (requires build-ldflags to be run first)
+	@echo "$(BLUE)Starting $(BINARY_NAME)-profile in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-profile > $(LOGS_DIR)/$(BINARY_NAME)-profile.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-profile > $(LOGS_DIR)/$(BINARY_NAME)-profile.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME)-profile started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-profile.pid))$(RESET)"
+	@echo "$(YELLOW)Profile service available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-cross
+run-bg-cross: ## Run cross-platform build for current OS/arch in background
+	@echo "$(BLUE)Starting $(BINARY_NAME) cross-platform build in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@OS=$$(uname -s | tr '[:upper:]' '[:lower:]'); \
+	ARCH=$$(uname -m); \
+	if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi; \
+	if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi; \
+	BINARY_PATH="./$(BIN_DIR)/$(BINARY_NAME)-$$OS-$$ARCH"; \
+	if [ -f "$$BINARY_PATH" ]; then \
+		if [ -f .env ]; then \
+			echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+			export $$(cat .env | grep -v '^#' | xargs) && \
+			nohup $$BINARY_PATH > $(LOGS_DIR)/$(BINARY_NAME)-cross.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+		else \
+			nohup $$BINARY_PATH > $(LOGS_DIR)/$(BINARY_NAME)-cross.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+		fi; \
+		echo "$(GREEN)✓ $(BINARY_NAME)-cross started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-cross.pid))$(RESET)"; \
+		echo "$(YELLOW)Cross-platform service available on port $(SERVICE_PORT)$(RESET)"; \
+	else \
+		echo "$(RED)✗ Cross-platform binary not found: $$BINARY_PATH$(RESET)"; \
+		echo "$(YELLOW)Run 'make build-cross' first$(RESET)"; \
+		exit 1; \
+	fi
+
+.PHONY: run-bg-all
+run-bg-all: ## Run all build variants (dev + cross) in background
+	@echo "$(BLUE)Starting all $(BINARY_NAME) build variants...$(RESET)"
+	@make run-bg-dev
+	@make run-bg-cross
+	@echo "$(GREEN)✓ All build variants running$(RESET)"
+
+.PHONY: run-bg-comprehensive
+run-bg-comprehensive: ## Run comprehensive test suite (all compilation variants)
+	@echo "$(BLUE)Starting comprehensive $(BINARY_NAME) test suite...$(RESET)"
+	@make run-bg
+	@make run-bg-dev
+	@make run-bg-static
+	@make run-bg-dynamic
+	@make run-bg-cgo
+	@make run-bg-debug
+	@make run-bg-optimized
+	@make run-bg-profile
+	@echo "$(GREEN)✓ Comprehensive test suite running$(RESET)"
+
 .PHONY: run-dev
 run-dev: build-dev ## Run development build
 	@echo "$(BLUE)Running development build...$(RESET)"
@@ -267,6 +410,202 @@ stop: ## Stop the background service
 	else \
 		echo "$(YELLOW)No PID file found$(RESET)"; \
 	fi
+
+.PHONY: stop-dev
+stop-dev: ## Stop the development build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-dev.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-dev.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-dev (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-dev.pid; \
+			echo "$(GREEN)✓ Development service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Development service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-dev.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No development PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-static
+stop-static: ## Stop the static build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-static.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-static.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-static (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-static.pid; \
+			echo "$(GREEN)✓ Static service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Static service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-static.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No static PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-dynamic
+stop-dynamic: ## Stop the dynamic build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-dynamic.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-dynamic.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-dynamic (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-dynamic.pid; \
+			echo "$(GREEN)✓ Dynamic service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Dynamic service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-dynamic.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No dynamic PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-cgo
+stop-cgo: ## Stop the CGO build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-cgo.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-cgo.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-cgo (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-cgo.pid; \
+			echo "$(GREEN)✓ CGO service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)CGO service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-cgo.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No CGO PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-debug
+stop-debug: ## Stop the debug build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-debug.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-debug.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-debug (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-debug.pid; \
+			echo "$(GREEN)✓ Debug service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Debug service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-debug.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No debug PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-optimized
+stop-optimized: ## Stop the optimized build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-optimized.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-optimized.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-optimized (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-optimized.pid; \
+			echo "$(GREEN)✓ Optimized service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Optimized service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-optimized.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No optimized PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-profile
+stop-profile: ## Stop the profile build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-profile.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-profile.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-profile (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+			echo "$(GREEN)✓ Profile service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Profile service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No profile PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-cross
+stop-cross: ## Stop the cross-platform build service
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-cross.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-cross.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			echo "$(BLUE)Stopping $(BINARY_NAME)-cross (PID: $$PID)...$(RESET)"; \
+			kill $$PID; \
+			sleep 2; \
+			if kill -0 $$PID 2>/dev/null; then \
+				echo "$(YELLOW)Force killing...$(RESET)"; \
+				kill -9 $$PID; \
+			fi; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+			echo "$(GREEN)✓ Cross-platform service stopped$(RESET)"; \
+		else \
+			echo "$(YELLOW)Cross-platform service not running$(RESET)"; \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+		fi; \
+	else \
+		echo "$(YELLOW)No cross-platform PID file found$(RESET)"; \
+	fi
+
+.PHONY: stop-all
+stop-all: ## Stop all build variants (dev + cross)
+	@echo "$(BLUE)Stopping all $(BINARY_NAME) build variants...$(RESET)"
+	@make stop-dev 2>/dev/null || true
+	@make stop-cross 2>/dev/null || true
+	@echo "$(GREEN)✓ All build variants stopped$(RESET)"
+
+.PHONY: stop-comprehensive
+stop-comprehensive: ## Stop comprehensive test suite (all compilation variants)
+	@echo "$(BLUE)Stopping comprehensive $(BINARY_NAME) test suite...$(RESET)"
+	@make stop 2>/dev/null || true
+	@make stop-dev 2>/dev/null || true
+	@make stop-static 2>/dev/null || true
+	@make stop-dynamic 2>/dev/null || true
+	@make stop-cgo 2>/dev/null || true
+	@make stop-debug 2>/dev/null || true
+	@make stop-optimized 2>/dev/null || true
+	@make stop-profile 2>/dev/null || true
+	@echo "$(GREEN)✓ Comprehensive test suite stopped$(RESET)"
 
 .PHONY: restart
 restart: stop start ## Restart the service

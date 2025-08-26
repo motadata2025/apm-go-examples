@@ -267,6 +267,128 @@ run-bg: build ## Run producer and consumer in background
 	@echo "$(GREEN)✓ Kafka producer started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY).pid))$(RESET)"
 	@echo "$(YELLOW)Producer available on port $(PRODUCER_PORT)$(RESET)"
 
+.PHONY: run-bg-dev
+run-bg-dev: build-dev ## Run development Kafka services in background
+	@echo "$(BLUE)Starting Kafka development services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-dev > $(LOGS_DIR)/$(CONSUMER_BINARY)-dev.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-dev.pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-dev > $(LOGS_DIR)/$(PRODUCER_BINARY)-dev.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-dev.pid
+	@echo "$(GREEN)✓ Kafka consumer-dev started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-dev.pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer-dev started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-dev.pid))$(RESET)"
+	@echo "$(YELLOW)Development producer available on port $(PRODUCER_PORT)$(RESET)"
+
+.PHONY: run-bg-static
+run-bg-static: ## Run static Kafka services in background
+	@echo "$(BLUE)Starting Kafka static services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-static > $(LOGS_DIR)/$(CONSUMER_BINARY)-static.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-static.pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-static > $(LOGS_DIR)/$(PRODUCER_BINARY)-static.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-static.pid
+	@echo "$(GREEN)✓ Kafka consumer-static started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-static.pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer-static started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-static.pid))$(RESET)"
+	@echo "$(YELLOW)Static producer available on port $(PRODUCER_PORT)$(RESET)"
+
+.PHONY: run-bg-dynamic
+run-bg-dynamic: ## Run dynamic Kafka services in background
+	@echo "$(BLUE)Starting Kafka dynamic services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-dynamic > $(LOGS_DIR)/$(CONSUMER_BINARY)-dynamic.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-dynamic.pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-dynamic > $(LOGS_DIR)/$(PRODUCER_BINARY)-dynamic.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-dynamic.pid
+	@echo "$(GREEN)✓ Kafka consumer-dynamic started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-dynamic.pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer-dynamic started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-dynamic.pid))$(RESET)"
+	@echo "$(YELLOW)Dynamic producer available on port $(PRODUCER_PORT)$(RESET)"
+
+.PHONY: run-bg-cgo
+run-bg-cgo: ## Run CGO Kafka services in background
+	@echo "$(BLUE)Starting Kafka CGO services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-cgo > $(LOGS_DIR)/$(CONSUMER_BINARY)-cgo.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-cgo.pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-cgo > $(LOGS_DIR)/$(PRODUCER_BINARY)-cgo.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-cgo.pid
+	@echo "$(GREEN)✓ Kafka consumer-cgo started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-cgo.pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer-cgo started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-cgo.pid))$(RESET)"
+	@echo "$(YELLOW)CGO producer available on port $(PRODUCER_PORT)$(RESET)"
+
+.PHONY: run-bg-debug
+run-bg-debug: ## Run debug Kafka services in background
+	@echo "$(BLUE)Starting Kafka debug services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-debug > $(LOGS_DIR)/$(CONSUMER_BINARY)-debug.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-debug.pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-debug > $(LOGS_DIR)/$(PRODUCER_BINARY)-debug.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-debug.pid
+	@echo "$(GREEN)✓ Kafka consumer-debug started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-debug.pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer-debug started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-debug.pid))$(RESET)"
+	@echo "$(YELLOW)Debug producer available on port $(PRODUCER_PORT)$(RESET)"
+
+.PHONY: run-bg-optimized
+run-bg-optimized: ## Run optimized Kafka services in background
+	@echo "$(BLUE)Starting Kafka optimized services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-optimized > $(LOGS_DIR)/$(CONSUMER_BINARY)-optimized.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-optimized.pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-optimized > $(LOGS_DIR)/$(PRODUCER_BINARY)-optimized.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-optimized.pid
+	@echo "$(GREEN)✓ Kafka consumer-optimized started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-optimized.pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer-optimized started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-optimized.pid))$(RESET)"
+	@echo "$(YELLOW)Optimized producer available on port $(PRODUCER_PORT)$(RESET)"
+
+.PHONY: run-bg-profile
+run-bg-profile: ## Run profile Kafka services in background
+	@echo "$(BLUE)Starting Kafka profile services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f $(BIN_DIR)/$(CONSUMER_BINARY)-profile ]; then \
+		nohup ./$(BIN_DIR)/$(CONSUMER_BINARY)-profile > $(LOGS_DIR)/$(CONSUMER_BINARY)-profile.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-profile.pid; \
+		echo "$(GREEN)✓ Kafka consumer-profile started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-profile.pid))$(RESET)"; \
+	else \
+		echo "$(YELLOW)Profile consumer binary not found, skipping...$(RESET)"; \
+	fi
+	@if [ -f $(BIN_DIR)/$(PRODUCER_BINARY)-profile ]; then \
+		nohup ./$(BIN_DIR)/$(PRODUCER_BINARY)-profile > $(LOGS_DIR)/$(PRODUCER_BINARY)-profile.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-profile.pid; \
+		echo "$(GREEN)✓ Kafka producer-profile started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-profile.pid))$(RESET)"; \
+		echo "$(YELLOW)Profile producer available on port $(PRODUCER_PORT)$(RESET)"; \
+	else \
+		echo "$(YELLOW)Profile producer binary not found, skipping...$(RESET)"; \
+	fi
+
+.PHONY: run-bg-cross
+run-bg-cross: ## Run cross-platform Kafka services for current OS/arch
+	@echo "$(BLUE)Starting Kafka cross-platform services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@OS=$$(uname -s | tr '[:upper:]' '[:lower:]'); \
+	ARCH=$$(uname -m); \
+	if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi; \
+	if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi; \
+	CONSUMER_PATH="./$(BIN_DIR)/$(CONSUMER_BINARY)-$$OS-$$ARCH"; \
+	PRODUCER_PATH="./$(BIN_DIR)/$(PRODUCER_BINARY)-$$OS-$$ARCH"; \
+	if [ -f "$$CONSUMER_PATH" ]; then \
+		nohup $$CONSUMER_PATH > $(LOGS_DIR)/$(CONSUMER_BINARY)-cross.log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY)-cross.pid; \
+		echo "$(GREEN)✓ Kafka consumer-cross started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY)-cross.pid))$(RESET)"; \
+	else \
+		echo "$(RED)✗ Cross-platform consumer binary not found: $$CONSUMER_PATH$(RESET)"; \
+	fi; \
+	if [ -f "$$PRODUCER_PATH" ]; then \
+		nohup $$PRODUCER_PATH > $(LOGS_DIR)/$(PRODUCER_BINARY)-cross.log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY)-cross.pid; \
+		echo "$(GREEN)✓ Kafka producer-cross started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY)-cross.pid))$(RESET)"; \
+		echo "$(YELLOW)Cross-platform producer available on port $(PRODUCER_PORT)$(RESET)"; \
+	else \
+		echo "$(RED)✗ Cross-platform producer binary not found: $$PRODUCER_PATH$(RESET)"; \
+	fi
+
+.PHONY: run-bg-all
+run-bg-all: ## Run all Kafka build variants (dev + cross)
+	@echo "$(BLUE)Starting all Kafka build variants...$(RESET)"
+	@make run-bg-dev
+	@make run-bg-cross
+	@echo "$(GREEN)✓ All Kafka build variants running$(RESET)"
+
+.PHONY: run-bg-comprehensive
+run-bg-comprehensive: ## Run comprehensive Kafka test suite (all compilation variants)
+	@echo "$(BLUE)Starting comprehensive Kafka test suite...$(RESET)"
+	@make run-bg
+	@make run-bg-dev
+	@make run-bg-static
+	@make run-bg-dynamic
+	@make run-bg-cgo
+	@make run-bg-debug
+	@make run-bg-optimized
+	@make run-bg-profile
+	@echo "$(GREEN)✓ Comprehensive Kafka test suite running$(RESET)"
+
 .PHONY: run-producer
 run-producer: ## Run only the producer locally
 	@echo "$(BLUE)Running $(PRODUCER_BINARY) locally...$(RESET)"
@@ -425,6 +547,202 @@ stop-consumer: ## Stop the consumer
 	else \
 		echo "$(YELLOW)No consumer PID file found$(RESET)"; \
 	fi
+
+.PHONY: stop-dev
+stop-dev: ## Stop development Kafka services
+	@echo "$(BLUE)Stopping Kafka development services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-dev.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-dev.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-dev.pid; \
+			echo "$(GREEN)✓ Kafka producer-dev stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-dev.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-dev.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-dev.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-dev.pid; \
+			echo "$(GREEN)✓ Kafka consumer-dev stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-dev.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-static
+stop-static: ## Stop static Kafka services
+	@echo "$(BLUE)Stopping Kafka static services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-static.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-static.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-static.pid; \
+			echo "$(GREEN)✓ Kafka producer-static stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-static.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-static.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-static.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-static.pid; \
+			echo "$(GREEN)✓ Kafka consumer-static stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-static.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-dynamic
+stop-dynamic: ## Stop dynamic Kafka services
+	@echo "$(BLUE)Stopping Kafka dynamic services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-dynamic.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-dynamic.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-dynamic.pid; \
+			echo "$(GREEN)✓ Kafka producer-dynamic stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-dynamic.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-dynamic.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-dynamic.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-dynamic.pid; \
+			echo "$(GREEN)✓ Kafka consumer-dynamic stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-dynamic.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-cgo
+stop-cgo: ## Stop CGO Kafka services
+	@echo "$(BLUE)Stopping Kafka CGO services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-cgo.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-cgo.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-cgo.pid; \
+			echo "$(GREEN)✓ Kafka producer-cgo stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-cgo.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-cgo.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-cgo.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-cgo.pid; \
+			echo "$(GREEN)✓ Kafka consumer-cgo stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-cgo.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-debug
+stop-debug: ## Stop debug Kafka services
+	@echo "$(BLUE)Stopping Kafka debug services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-debug.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-debug.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-debug.pid; \
+			echo "$(GREEN)✓ Kafka producer-debug stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-debug.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-debug.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-debug.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-debug.pid; \
+			echo "$(GREEN)✓ Kafka consumer-debug stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-debug.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-optimized
+stop-optimized: ## Stop optimized Kafka services
+	@echo "$(BLUE)Stopping Kafka optimized services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-optimized.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-optimized.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-optimized.pid; \
+			echo "$(GREEN)✓ Kafka producer-optimized stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-optimized.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-optimized.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-optimized.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-optimized.pid; \
+			echo "$(GREEN)✓ Kafka consumer-optimized stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-optimized.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-profile
+stop-profile: ## Stop profile Kafka services
+	@echo "$(BLUE)Stopping Kafka profile services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-profile.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-profile.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-profile.pid; \
+			echo "$(GREEN)✓ Kafka producer-profile stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-profile.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-profile.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-profile.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-profile.pid; \
+			echo "$(GREEN)✓ Kafka consumer-profile stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-profile.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-cross
+stop-cross: ## Stop cross-platform Kafka services
+	@echo "$(BLUE)Stopping Kafka cross-platform services...$(RESET)"
+	@if [ -f $(PID_DIR)/$(PRODUCER_BINARY)-cross.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(PRODUCER_BINARY)-cross.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(PRODUCER_BINARY)-cross.pid; \
+			echo "$(GREEN)✓ Kafka producer-cross stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(PRODUCER_BINARY)-cross.pid; \
+		fi; \
+	fi
+	@if [ -f $(PID_DIR)/$(CONSUMER_BINARY)-cross.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(CONSUMER_BINARY)-cross.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(CONSUMER_BINARY)-cross.pid; \
+			echo "$(GREEN)✓ Kafka consumer-cross stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(CONSUMER_BINARY)-cross.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-all
+stop-all: ## Stop all Kafka build variants (dev + cross)
+	@echo "$(BLUE)Stopping all Kafka build variants...$(RESET)"
+	@make stop-dev 2>/dev/null || true
+	@make stop-cross 2>/dev/null || true
+	@echo "$(GREEN)✓ All Kafka build variants stopped$(RESET)"
+
+.PHONY: stop-comprehensive
+stop-comprehensive: ## Stop comprehensive Kafka test suite (all compilation variants)
+	@echo "$(BLUE)Stopping comprehensive Kafka test suite...$(RESET)"
+	@make stop 2>/dev/null || true
+	@make stop-dev 2>/dev/null || true
+	@make stop-static 2>/dev/null || true
+	@make stop-dynamic 2>/dev/null || true
+	@make stop-cgo 2>/dev/null || true
+	@make stop-debug 2>/dev/null || true
+	@make stop-optimized 2>/dev/null || true
+	@make stop-profile 2>/dev/null || true
+	@echo "$(GREEN)✓ Comprehensive Kafka test suite stopped$(RESET)"
 
 .PHONY: restart
 restart: stop start-all ## Restart both services

@@ -167,6 +167,103 @@ run-bg: build ## Run the HTTP REST API in background
 	@echo "$(GREEN)✓ $(BINARY_NAME) started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME).pid))$(RESET)"
 	@echo "$(YELLOW)API available on port $(SERVICE_PORT)$(RESET)"
 
+.PHONY: run-bg-dev
+run-bg-dev: build-dev ## Run development HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-dev in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(BINARY_NAME)-dev > $(LOGS_DIR)/$(BINARY_NAME)-dev.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-dev.pid
+	@echo "$(GREEN)✓ $(BINARY_NAME)-dev started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-dev.pid))$(RESET)"
+	@echo "$(YELLOW)Development API available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-static
+run-bg-static: ## Run static HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-static in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(BINARY_NAME)-static > $(LOGS_DIR)/$(BINARY_NAME)-static.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-static.pid
+	@echo "$(GREEN)✓ $(BINARY_NAME)-static started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-static.pid))$(RESET)"
+	@echo "$(YELLOW)Static API available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-dynamic
+run-bg-dynamic: ## Run dynamic HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-dynamic in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(BINARY_NAME)-dynamic > $(LOGS_DIR)/$(BINARY_NAME)-dynamic.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-dynamic.pid
+	@echo "$(GREEN)✓ $(BINARY_NAME)-dynamic started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-dynamic.pid))$(RESET)"
+	@echo "$(YELLOW)Dynamic API available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-cgo
+run-bg-cgo: ## Run CGO HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-cgo in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(BINARY_NAME)-cgo > $(LOGS_DIR)/$(BINARY_NAME)-cgo.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-cgo.pid
+	@echo "$(GREEN)✓ $(BINARY_NAME)-cgo started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-cgo.pid))$(RESET)"
+	@echo "$(YELLOW)CGO API available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-debug
+run-bg-debug: ## Run debug HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-debug in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(BINARY_NAME)-debug > $(LOGS_DIR)/$(BINARY_NAME)-debug.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-debug.pid
+	@echo "$(GREEN)✓ $(BINARY_NAME)-debug started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-debug.pid))$(RESET)"
+	@echo "$(YELLOW)Debug API available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-optimized
+run-bg-optimized: ## Run optimized HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-optimized in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(BINARY_NAME)-optimized > $(LOGS_DIR)/$(BINARY_NAME)-optimized.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-optimized.pid
+	@echo "$(GREEN)✓ $(BINARY_NAME)-optimized started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-optimized.pid))$(RESET)"
+	@echo "$(YELLOW)Optimized API available on port $(SERVICE_PORT)$(RESET)"
+
+.PHONY: run-bg-profile
+run-bg-profile: ## Run profile HTTP REST API in background
+	@echo "$(BLUE)Starting $(BINARY_NAME)-profile in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f $(BIN_DIR)/$(BINARY_NAME)-profile ]; then \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME)-profile > $(LOGS_DIR)/$(BINARY_NAME)-profile.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+		echo "$(GREEN)✓ $(BINARY_NAME)-profile started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-profile.pid))$(RESET)"; \
+		echo "$(YELLOW)Profile API available on port $(SERVICE_PORT)$(RESET)"; \
+	else \
+		echo "$(YELLOW)Profile binary not found, skipping...$(RESET)"; \
+	fi
+
+.PHONY: run-bg-cross
+run-bg-cross: ## Run cross-platform HTTP REST API for current OS/arch
+	@echo "$(BLUE)Starting $(BINARY_NAME) cross-platform in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@OS=$$(uname -s | tr '[:upper:]' '[:lower:]'); \
+	ARCH=$$(uname -m); \
+	if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi; \
+	if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi; \
+	BINARY_PATH="./$(BIN_DIR)/$(BINARY_NAME)-$$OS-$$ARCH"; \
+	if [ -f "$$BINARY_PATH" ]; then \
+		nohup $$BINARY_PATH > $(LOGS_DIR)/$(BINARY_NAME)-cross.log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+		echo "$(GREEN)✓ $(BINARY_NAME)-cross started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME)-cross.pid))$(RESET)"; \
+		echo "$(YELLOW)Cross-platform API available on port $(SERVICE_PORT)$(RESET)"; \
+	else \
+		echo "$(RED)✗ Cross-platform binary not found: $$BINARY_PATH$(RESET)"; \
+	fi
+
+.PHONY: run-bg-all
+run-bg-all: ## Run all HTTP REST API build variants (dev + cross)
+	@echo "$(BLUE)Starting all $(BINARY_NAME) build variants...$(RESET)"
+	@make run-bg-dev
+	@make run-bg-cross
+	@echo "$(GREEN)✓ All HTTP REST API build variants running$(RESET)"
+
+.PHONY: run-bg-comprehensive
+run-bg-comprehensive: ## Run comprehensive HTTP REST API test suite
+	@echo "$(BLUE)Starting comprehensive $(BINARY_NAME) test suite...$(RESET)"
+	@make run-bg
+	@make run-bg-dev
+	@make run-bg-static
+	@make run-bg-dynamic
+	@make run-bg-cgo
+	@make run-bg-debug
+	@make run-bg-optimized
+	@make run-bg-profile
+	@echo "$(GREEN)✓ Comprehensive HTTP REST API test suite running$(RESET)"
+
 .PHONY: run-dev
 run-dev: build-dev ## Run development build
 	@echo "$(BLUE)Running development build...$(RESET)"
@@ -262,6 +359,122 @@ stop: ## Stop the background HTTP REST API
 	else \
 		echo "$(YELLOW)No PID file found$(RESET)"; \
 	fi
+
+.PHONY: stop-dev
+stop-dev: ## Stop development HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-dev.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-dev.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-dev.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-dev stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-dev.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-static
+stop-static: ## Stop static HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-static.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-static.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-static.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-static stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-static.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-dynamic
+stop-dynamic: ## Stop dynamic HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-dynamic.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-dynamic.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-dynamic.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-dynamic stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-dynamic.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-cgo
+stop-cgo: ## Stop CGO HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-cgo.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-cgo.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-cgo.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-cgo stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-cgo.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-debug
+stop-debug: ## Stop debug HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-debug.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-debug.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-debug.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-debug stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-debug.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-optimized
+stop-optimized: ## Stop optimized HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-optimized.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-optimized.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-optimized.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-optimized stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-optimized.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-profile
+stop-profile: ## Stop profile HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-profile.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-profile.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-profile stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-profile.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-cross
+stop-cross: ## Stop cross-platform HTTP REST API
+	@if [ -f $(PID_DIR)/$(BINARY_NAME)-cross.pid ]; then \
+		PID=$$(cat $(PID_DIR)/$(BINARY_NAME)-cross.pid); \
+		if kill -0 $$PID 2>/dev/null; then \
+			kill $$PID && rm -f $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+			echo "$(GREEN)✓ $(BINARY_NAME)-cross stopped$(RESET)"; \
+		else \
+			rm -f $(PID_DIR)/$(BINARY_NAME)-cross.pid; \
+		fi; \
+	fi
+
+.PHONY: stop-all
+stop-all: ## Stop all HTTP REST API build variants (dev + cross)
+	@echo "$(BLUE)Stopping all $(BINARY_NAME) build variants...$(RESET)"
+	@make stop-dev 2>/dev/null || true
+	@make stop-cross 2>/dev/null || true
+	@echo "$(GREEN)✓ All HTTP REST API build variants stopped$(RESET)"
+
+.PHONY: stop-comprehensive
+stop-comprehensive: ## Stop comprehensive HTTP REST API test suite
+	@echo "$(BLUE)Stopping comprehensive $(BINARY_NAME) test suite...$(RESET)"
+	@make stop 2>/dev/null || true
+	@make stop-dev 2>/dev/null || true
+	@make stop-static 2>/dev/null || true
+	@make stop-dynamic 2>/dev/null || true
+	@make stop-cgo 2>/dev/null || true
+	@make stop-debug 2>/dev/null || true
+	@make stop-optimized 2>/dev/null || true
+	@make stop-profile 2>/dev/null || true
+	@echo "$(GREEN)✓ Comprehensive HTTP REST API test suite stopped$(RESET)"
 
 .PHONY: restart
 restart: stop start ## Restart the HTTP REST API

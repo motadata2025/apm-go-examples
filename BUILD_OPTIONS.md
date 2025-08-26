@@ -98,6 +98,72 @@ make binaries            # Show all built binaries
 | kafka-producer | 7.2MB | 7.2MB | 10.8MB | 7.3MB |
 | kafka-consumer | 6.5MB | 6.5MB | 9.7MB | 6.5MB |
 
+## 🚀 Complete Command Reference
+
+### **Build Commands**
+```bash
+# Basic builds
+make build           # Production builds (current platform)
+make build-dev       # Development builds with race detection
+make build-cross     # Cross-platform builds (all architectures)
+make build-all       # All build types (dev + cross-platform)
+
+# Advanced builds
+make build-static      # Static builds (no external dependencies)
+make build-dynamic     # Dynamic builds (with shared libraries)
+make build-cgo         # CGO-enabled builds (C interop)
+make build-ldflags     # Custom LDFLAGS builds (optimized/debug/profile)
+make build-comprehensive # ALL compilation variants (testing suite)
+```
+
+### **Run Commands (by Build Variant)**
+```bash
+# Production & Development
+make run               # Run production builds
+make run-dev           # Run development builds (race detection)
+
+# Cross-platform & Combined
+make run-cross         # Run cross-platform builds (current OS)
+make run-all           # Run all builds (dev + cross)
+
+# Linking Variants
+make run-static        # Run static builds (no dependencies)
+make run-dynamic       # Run dynamic builds (shared libraries)
+make run-cgo           # Run CGO builds (C interop)
+
+# Optimization Variants
+make run-debug         # Run debug builds (full symbols)
+make run-optimized     # Run optimized builds (performance)
+make run-profile       # Run profile builds (profiling enabled)
+
+# Comprehensive Testing
+make run-comprehensive # Run comprehensive test suite (ALL variants)
+```
+
+### **Stop Commands (by Build Variant)**
+```bash
+# Production & Development
+make stop               # Stop production builds
+make stop-dev           # Stop development builds
+
+# Cross-platform & Combined
+make stop-cross         # Stop cross-platform builds
+make stop-all           # Stop all builds (dev + cross)
+
+# Linking Variants
+make stop-static        # Stop static builds
+make stop-dynamic       # Stop dynamic builds
+make stop-cgo           # Stop CGO builds
+
+# Optimization Variants
+make stop-debug         # Stop debug builds
+make stop-optimized     # Stop optimized builds
+make stop-profile       # Stop profile builds
+
+# Comprehensive Testing
+make stop-comprehensive # Stop comprehensive test suite (ALL variants)
+```
+
 ## 🔍 Usage Examples
 
 ```bash
@@ -107,14 +173,24 @@ make build-comprehensive
 # Check what's available
 make binaries
 
-# Test specific scenarios
-./db-sql-multi/bin/db-sql-multi-static     # Static binary
-./db-sql-multi/bin/db-sql-multi-debug      # Debug symbols
-./db-sql-multi/bin/db-sql-multi-cgo        # CGO enabled
+# Test specific OpenTelemetry scenarios
+make run-static         # Container-like environment
+make ip                 # Get access URLs
+curl http://YOUR_IP:8081/trigger-crud
+make stop-static
 
-# Run with different OpenTelemetry configurations
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 \
-  ./db-sql-multi/bin/db-sql-multi-optimized
+make run-cgo           # C interoperability testing
+curl http://YOUR_IP:8082/trigger-produce
+make stop-cgo
+
+make run-debug         # Full debugging symbols
+curl http://YOUR_IP:8083/trigger-stream
+make stop-debug
+
+# Comprehensive testing workflow
+make setup build-comprehensive run-comprehensive ip
+# Test all services across all build variants
+make stop-comprehensive clean
 ```
 
 ## 🎪 Perfect for Testing
