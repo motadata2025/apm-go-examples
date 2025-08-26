@@ -223,6 +223,16 @@ run: ## Run the gRPC server locally
 	@echo "$(YELLOW)Server will be available on port $(SERVER_PORT)$(RESET)"
 	@go run $(SERVER_MAIN)
 
+.PHONY: run-bg
+run-bg: build ## Run gRPC server and client in background
+	@echo "$(BLUE)Starting gRPC services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(SERVER_BINARY) > $(LOGS_DIR)/$(SERVER_BINARY).log 2>&1 & echo $$! > $(PID_DIR)/$(SERVER_BINARY).pid
+	@nohup ./$(BIN_DIR)/$(CLIENT_BINARY) > $(LOGS_DIR)/$(CLIENT_BINARY).log 2>&1 & echo $$! > $(PID_DIR)/$(CLIENT_BINARY).pid
+	@echo "$(GREEN)✓ gRPC server started (PID: $$(cat $(PID_DIR)/$(SERVER_BINARY).pid))$(RESET)"
+	@echo "$(GREEN)✓ gRPC client started (PID: $$(cat $(PID_DIR)/$(CLIENT_BINARY).pid))$(RESET)"
+	@echo "$(YELLOW)Server available on port $(SERVER_PORT), Client on port $(CLIENT_PORT)$(RESET)"
+
 .PHONY: run-server
 run-server: build-server ## Run the built server
 	@echo "$(BLUE)Running built $(SERVER_BINARY)...$(RESET)"

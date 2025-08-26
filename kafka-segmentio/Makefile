@@ -257,6 +257,16 @@ run: ## Run both producer and consumer locally (requires Kafka)
 	@echo "$(YELLOW)Producer will be available on port $(PRODUCER_PORT)$(RESET)"
 	@go run $(PRODUCER_MAIN)
 
+.PHONY: run-bg
+run-bg: build ## Run producer and consumer in background
+	@echo "$(BLUE)Starting Kafka services in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@nohup ./$(BIN_DIR)/$(CONSUMER_BINARY) > $(LOGS_DIR)/$(CONSUMER_BINARY).log 2>&1 & echo $$! > $(PID_DIR)/$(CONSUMER_BINARY).pid
+	@nohup ./$(BIN_DIR)/$(PRODUCER_BINARY) > $(LOGS_DIR)/$(PRODUCER_BINARY).log 2>&1 & echo $$! > $(PID_DIR)/$(PRODUCER_BINARY).pid
+	@echo "$(GREEN)✓ Kafka consumer started (PID: $$(cat $(PID_DIR)/$(CONSUMER_BINARY).pid))$(RESET)"
+	@echo "$(GREEN)✓ Kafka producer started (PID: $$(cat $(PID_DIR)/$(PRODUCER_BINARY).pid))$(RESET)"
+	@echo "$(YELLOW)Producer available on port $(PRODUCER_PORT)$(RESET)"
+
 .PHONY: run-producer
 run-producer: ## Run only the producer locally
 	@echo "$(BLUE)Running $(PRODUCER_BINARY) locally...$(RESET)"

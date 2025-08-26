@@ -159,6 +159,20 @@ run: ## Run the application locally
 	@echo "$(YELLOW)Service will be available on port $(SERVICE_PORT)$(RESET)"
 	@go run $(MAIN_PATH)
 
+.PHONY: run-bg
+run-bg: build ## Run the application in background
+	@echo "$(BLUE)Starting $(BINARY_NAME) in background...$(RESET)"
+	@mkdir -p $(LOGS_DIR) $(PID_DIR)
+	@if [ -f .env ]; then \
+		echo "$(YELLOW)Loading environment from .env file...$(RESET)"; \
+		export $$(cat .env | grep -v '^#' | xargs) && \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME) > $(LOGS_DIR)/$(BINARY_NAME).log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME).pid; \
+	else \
+		nohup ./$(BIN_DIR)/$(BINARY_NAME) > $(LOGS_DIR)/$(BINARY_NAME).log 2>&1 & echo $$! > $(PID_DIR)/$(BINARY_NAME).pid; \
+	fi
+	@echo "$(GREEN)✓ $(BINARY_NAME) started in background (PID: $$(cat $(PID_DIR)/$(BINARY_NAME).pid))$(RESET)"
+	@echo "$(YELLOW)Service available on port $(SERVICE_PORT)$(RESET)"
+
 .PHONY: run-dev
 run-dev: build-dev ## Run development build
 	@echo "$(BLUE)Running development build...$(RESET)"

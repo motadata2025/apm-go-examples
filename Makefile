@@ -1,427 +1,224 @@
-# =============================================================================
-# APM Examples - Master Makefile
-# =============================================================================
+# APM Examples - Simple Branch
+# Simple commands for quick setup and deployment
 
-# Project configuration
-PROJECT_NAME := apm-examples
-SERVICES := db-sql-multi grpc-svc http-rest kafka-segmentio
+.PHONY: help setup build build-dev build-cross build-all build-static build-dynamic build-cgo build-ldflags build-comprehensive run stop clean ip binaries
 
-# Service directories and ports
-DB_SQL_DIR := db-sql-multi
-GRPC_DIR := grpc-svc
-HTTP_DIR := http-rest
-KAFKA_DIR := kafka-segmentio
-
-# Service ports
-DB_SQL_PORT := 8081
-GRPC_PORT := 50051
-HTTP_PORT := 8084
-KAFKA_PRODUCER_PORT := 8082
-KAFKA_CONSUMER_PORT := 8083
-
-# Build configuration
-VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
-BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
-GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-
-# Colors for output
-RED := \033[31m
-GREEN := \033[32m
-YELLOW := \033[33m
-BLUE := \033[34m
-MAGENTA := \033[35m
-CYAN := \033[36m
-WHITE := \033[37m
-RESET := \033[0m
-
-# =============================================================================
-# Help Target
-# =============================================================================
-
-.PHONY: help
-help: ## Show this help message
-	@echo "$(CYAN)$(PROJECT_NAME) - Master Makefile$(RESET)"
+help:
+	@echo "APM Examples - Simple Commands"
+	@echo "=============================="
 	@echo ""
-	@echo "$(YELLOW)Build targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(build|cross|dist)"
+	@echo "Quick Start:"
+	@echo "  make setup       - Setup Docker infrastructure"
+	@echo "  make build       - Build all services (production)"
+	@echo "  make run         - Run all services in background"
+	@echo "  make ip          - Show machine IPs and access URLs"
+	@echo "  make stop        - Stop all services"
+	@echo "  make clean       - Clean everything"
 	@echo ""
-	@echo "$(YELLOW)Development targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(run|dev|test|fmt|lint)"
+	@echo "Build Options:"
+	@echo "  make build        - Production builds (current platform)"
+	@echo "  make build-dev    - Development builds with race detection"
+	@echo "  make build-cross  - Cross-platform builds (all architectures)"
+	@echo "  make build-all    - All build types (dev + cross-platform)"
 	@echo ""
-	@echo "$(YELLOW)Infrastructure targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(infra|docker|kafka)"
+	@echo "Advanced Build Options:"
+	@echo "  make build-static      - Static builds (no external dependencies)"
+	@echo "  make build-dynamic     - Dynamic builds (with shared libraries)"
+	@echo "  make build-cgo         - CGO-enabled builds (C interop)"
+	@echo "  make build-ldflags     - Custom LDFLAGS builds (optimized/debug)"
+	@echo "  make build-comprehensive - ALL compilation variants (testing suite)"
 	@echo ""
-	@echo "$(YELLOW)Service management:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(host|start|stop|restart|status)"
+	@echo "Utilities:"
+	@echo "  make binaries    - Show all built binaries"
 	@echo ""
-	@echo "$(YELLOW)Utility targets:$(RESET)"
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}' $(MAKEFILE_LIST) | grep -E "(clean|deps|mod|install|health)"
+	@echo "One-liner: make setup build run ip"
+
+setup:
+	@echo "Setting up Docker infrastructure..."
+	docker compose -f docker-compose-simple.yml up -d
+	@echo "Waiting for services to be ready..."
+	@sleep 15
+	@echo "Infrastructure ready!"
+
+# Build all services (production)
+build:
+	@echo "Building all services (production)..."
+	@cd db-sql-multi && make build
+	@cd grpc-svc && make build
+	@cd http-rest && make build
+	@cd kafka-segmentio && make build
+	@echo "All services built!"
+
+# Build all services (development with race detection)
+build-dev:
+	@echo "Building all services (development with race detection)..."
+	@cd db-sql-multi && make build-dev
+	@cd grpc-svc && make build-dev
+	@cd http-rest && make build-dev
+	@cd kafka-segmentio && make build-dev
+	@echo "All development builds complete!"
+
+# Build all services for multiple platforms
+build-cross:
+	@echo "Building all services for multiple platforms..."
+	@echo "This will create binaries for Linux, macOS, and Windows (AMD64 & ARM64)"
+	@cd db-sql-multi && make cross-build
+	@cd grpc-svc && make cross-build
+	@cd http-rest && make cross-build
+	@cd kafka-segmentio && make cross-build
+	@echo "Cross-platform builds complete!"
 	@echo ""
-	@echo "$(YELLOW)Services:$(RESET)"
-	@echo "  $(MAGENTA)db-sql-multi$(RESET)     Database service (PostgreSQL & MySQL) - Port 8081"
-	@echo "  $(MAGENTA)grpc-svc$(RESET)         gRPC server (50051) and HTTP client (8083)"
-	@echo "  $(MAGENTA)http-rest$(RESET)        HTTP REST API service - Port 8084"
-	@echo "  $(MAGENTA)kafka-segmentio$(RESET)  Kafka producer/consumer - Port 8082"
+	@echo "Built binaries are available in each service's bin/ directory:"
+	@echo "  db-sql-multi/bin/     - Database service binaries"
+	@echo "  grpc-svc/bin/         - gRPC server & client binaries"
+	@echo "  http-rest/bin/        - HTTP REST API binaries"
+	@echo "  kafka-segmentio/bin/  - Kafka producer & consumer binaries"
+
+# Build all variants (dev + cross-platform)
+build-all: build-dev build-cross
+	@echo "All build variants complete!"
 	@echo ""
-	@echo "$(YELLOW)Individual service help:$(RESET)"
-	@echo "  $(GREEN)make -C <service> help$(RESET)  Show help for specific service"
+	@echo "Available builds:"
+	@echo "  Production:     bin/<service>"
+	@echo "  Development:    bin/<service>-dev"
+	@echo "  Cross-platform: bin/<service>-<os>-<arch>"
 
-# =============================================================================
-# Setup and Dependencies
-# =============================================================================
+# Build static binaries (no external dependencies)
+build-static:
+	@echo "Building all services (static linking)..."
+	@echo "These binaries will have no external dependencies"
+	@cd db-sql-multi && CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static" -s -w' -o bin/db-sql-multi-static ./cmd/app
+	@cd grpc-svc && CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static" -s -w' -o bin/grpc-server-static ./cmd/server && \
+		CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static" -s -w' -o bin/grpc-client-static ./cmd/client
+	@cd http-rest && CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static" -s -w' -o bin/http-rest-api-static ./cmd/api
+	@cd kafka-segmentio && CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static" -s -w' -o bin/kafka-producer-static ./cmd/producer && \
+		CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static" -s -w' -o bin/kafka-consumer-static ./cmd/consumer
+	@echo "Static builds complete! (suffix: -static)"
 
-.PHONY: setup
-setup: ## Setup all project directories and dependencies
-	@echo "$(BLUE)Setting up all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Setting up $$service...$(RESET)"; \
-		$(MAKE) -C $$service setup; \
-	done
-	@echo "$(GREEN)✓ All services setup complete$(RESET)"
+# Build dynamic binaries (with shared libraries)
+build-dynamic:
+	@echo "Building all services (dynamic linking)..."
+	@echo "These binaries will use shared system libraries"
+	@cd db-sql-multi && CGO_ENABLED=1 go build -ldflags '-linkmode external' -o bin/db-sql-multi-dynamic ./cmd/app
+	@cd grpc-svc && CGO_ENABLED=1 go build -ldflags '-linkmode external' -o bin/grpc-server-dynamic ./cmd/server && \
+		CGO_ENABLED=1 go build -ldflags '-linkmode external' -o bin/grpc-client-dynamic ./cmd/client
+	@cd http-rest && CGO_ENABLED=1 go build -ldflags '-linkmode external' -o bin/http-rest-api-dynamic ./cmd/api
+	@cd kafka-segmentio && CGO_ENABLED=1 go build -ldflags '-linkmode external' -o bin/kafka-producer-dynamic ./cmd/producer && \
+		CGO_ENABLED=1 go build -ldflags '-linkmode external' -o bin/kafka-consumer-dynamic ./cmd/consumer
+	@echo "Dynamic builds complete! (suffix: -dynamic)"
 
-.PHONY: deps
-deps: ## Download and verify dependencies for all services
-	@echo "$(BLUE)Downloading dependencies for all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Dependencies for $$service...$(RESET)"; \
-		$(MAKE) -C $$service deps; \
-	done
-	@echo "$(GREEN)✓ All dependencies ready$(RESET)"
+# Build CGO-enabled binaries (C interoperability)
+build-cgo:
+	@echo "Building all services (CGO enabled)..."
+	@echo "These binaries can interoperate with C libraries"
+	@cd db-sql-multi && CGO_ENABLED=1 go build -race -o bin/db-sql-multi-cgo ./cmd/app
+	@cd grpc-svc && CGO_ENABLED=1 go build -race -o bin/grpc-server-cgo ./cmd/server && \
+		CGO_ENABLED=1 go build -race -o bin/grpc-client-cgo ./cmd/client
+	@cd http-rest && CGO_ENABLED=1 go build -race -o bin/http-rest-api-cgo ./cmd/api
+	@cd kafka-segmentio && CGO_ENABLED=1 go build -race -o bin/kafka-producer-cgo ./cmd/producer && \
+		CGO_ENABLED=1 go build -race -o bin/kafka-consumer-cgo ./cmd/consumer
+	@echo "CGO builds complete! (suffix: -cgo)"
 
-.PHONY: mod-tidy
-mod-tidy: ## Clean up go.mod and go.sum for all services
-	@echo "$(BLUE)Tidying modules for all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Tidying $$service...$(RESET)"; \
-		$(MAKE) -C $$service mod-tidy; \
-	done
-	@echo "$(GREEN)✓ All modules tidied$(RESET)"
+# Build with custom LDFLAGS (optimized/debug variants)
+build-ldflags:
+	@echo "Building all services with custom LDFLAGS..."
+	@echo "Creating optimized, debug, and profiling variants"
+	@cd db-sql-multi && \
+		go build -ldflags '-s -w -X main.buildType=optimized' -o bin/db-sql-multi-optimized ./cmd/app && \
+		go build -ldflags '-X main.buildType=debug' -gcflags='-N -l' -o bin/db-sql-multi-debug ./cmd/app && \
+		go build -ldflags '-X main.buildType=profile' -o bin/db-sql-multi-profile ./cmd/app
+	@cd grpc-svc && \
+		go build -ldflags '-s -w -X main.buildType=optimized' -o bin/grpc-server-optimized ./cmd/server && \
+		go build -ldflags '-s -w -X main.buildType=optimized' -o bin/grpc-client-optimized ./cmd/client && \
+		go build -ldflags '-X main.buildType=debug' -gcflags='-N -l' -o bin/grpc-server-debug ./cmd/server && \
+		go build -ldflags '-X main.buildType=debug' -gcflags='-N -l' -o bin/grpc-client-debug ./cmd/client
+	@cd http-rest && \
+		go build -ldflags '-s -w -X main.buildType=optimized' -o bin/http-rest-api-optimized ./cmd/api && \
+		go build -ldflags '-X main.buildType=debug' -gcflags='-N -l' -o bin/http-rest-api-debug ./cmd/api
+	@cd kafka-segmentio && \
+		go build -ldflags '-s -w -X main.buildType=optimized' -o bin/kafka-producer-optimized ./cmd/producer && \
+		go build -ldflags '-s -w -X main.buildType=optimized' -o bin/kafka-consumer-optimized ./cmd/consumer && \
+		go build -ldflags '-X main.buildType=debug' -gcflags='-N -l' -o bin/kafka-producer-debug ./cmd/producer && \
+		go build -ldflags '-X main.buildType=debug' -gcflags='-N -l' -o bin/kafka-consumer-debug ./cmd/consumer
+	@echo "LDFLAGS builds complete! (suffixes: -optimized, -debug, -profile)"
 
-# =============================================================================
-# Build Targets
-# =============================================================================
+# Build comprehensive test suite (all compilation variants)
+build-comprehensive: build build-dev build-static build-dynamic build-cgo build-ldflags
+	@echo ""
+	@echo "🎯 COMPREHENSIVE BUILD COMPLETE!"
+	@echo "================================="
+	@echo ""
+	@echo "All compilation variants built for OpenTelemetry testing:"
+	@echo "  ✅ Production builds     (standard)"
+	@echo "  ✅ Development builds    (race detection)"
+	@echo "  ✅ Static builds         (no dependencies)"
+	@echo "  ✅ Dynamic builds        (shared libraries)"
+	@echo "  ✅ CGO builds            (C interop)"
+	@echo "  ✅ LDFLAGS builds        (optimized/debug)"
+	@echo ""
+	@echo "Use 'make binaries' to see all available binaries"
+	@echo "Perfect for testing OpenTelemetry auto-instrumentation across different compilation scenarios!"
 
-.PHONY: build
-build: ## Build all services (production standards)
-	@echo "$(BLUE)Building all services...$(RESET)"
-	@echo "$(YELLOW)Version: $(VERSION)$(RESET)"
-	@echo "$(YELLOW)Build Time: $(BUILD_TIME)$(RESET)"
-	@echo "$(YELLOW)Git Commit: $(GIT_COMMIT)$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Building $$service...$(RESET)"; \
-		$(MAKE) -C $$service build; \
-	done
-	@echo "$(GREEN)✓ All services built successfully$(RESET)"
+run:
+	@echo "Starting all services..."
+	@cd db-sql-multi && make run-bg
+	@cd grpc-svc && make run-bg
+	@cd http-rest && make run-bg  
+	@cd kafka-segmentio && make run-bg
+	@echo "All services running!"
 
-.PHONY: build-dev
-build-dev: ## Build all services for development
-	@echo "$(BLUE)Building all services for development...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Building $$service (dev)...$(RESET)"; \
-		$(MAKE) -C $$service build-dev; \
-	done
-	@echo "$(GREEN)✓ All development builds complete$(RESET)"
+ip:
+	@echo "Machine IP Addresses & Access URLs"
+	@echo "=================================="
+	@echo ""
+	@echo "Your Machine IPs:"
+	@LOCAL_IP=$$(ip route get 8.8.8.8 | awk '{print $$7; exit}' 2>/dev/null || echo "127.0.0.1"); \
+	PUBLIC_IP=$$(curl -s --connect-timeout 3 ifconfig.me 2>/dev/null || echo "Not available"); \
+	echo "  Local IP:  $$LOCAL_IP"; \
+	echo "  Public IP: $$PUBLIC_IP"; \
+	echo ""; \
+	echo "Service URLs (use Local IP for external access):"; \
+	echo "  Database:    http://$$LOCAL_IP:8081/trigger-crud"; \
+	echo "  Kafka:       http://$$LOCAL_IP:8082/trigger-produce"; \
+	echo "  gRPC Client: http://$$LOCAL_IP:8083/trigger-stream"; \
+	echo "  HTTP REST:   http://$$LOCAL_IP:8084/trigger/allservices"; \
+	echo "  gRPC Server: grpc://$$LOCAL_IP:50051"; \
+	echo ""; \
+	echo "Test Commands:"; \
+	echo "  curl http://$$LOCAL_IP:8081/trigger-crud"; \
+	echo "  curl http://$$LOCAL_IP:8082/trigger-produce"; \
+	echo "  curl http://$$LOCAL_IP:8083/trigger-stream"; \
+	echo "  curl http://$$LOCAL_IP:8084/trigger/allservices"
 
-.PHONY: cross-build
-cross-build: ## Build all services for all supported platforms
-	@echo "$(BLUE)Cross-compiling all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Cross-building $$service...$(RESET)"; \
-		$(MAKE) -C $$service cross-build; \
-	done
-	@echo "$(GREEN)✓ Cross-compilation complete for all services$(RESET)"
-
-.PHONY: dist
-dist: ## Create distribution packages for all services
-	@echo "$(BLUE)Creating distribution packages...$(RESET)"
-	@mkdir -p dist
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Creating packages for $$service...$(RESET)"; \
-		$(MAKE) -C $$service dist; \
-		if [ -d "$$service/dist" ]; then \
-			cp -r $$service/dist/* dist/ 2>/dev/null || true; \
+# Show all built binaries
+binaries:
+	@echo "Available Binaries"
+	@echo "=================="
+	@echo ""
+	@for service in db-sql-multi grpc-svc http-rest kafka-segmentio; do \
+		echo "$$service/bin/:"; \
+		if [ -d "$$service/bin" ]; then \
+			ls -la $$service/bin/ | grep -E '^-' | awk '{printf "  %-30s %s %s %s\n", $$9, $$5, $$6, $$7}' || echo "  (no binaries found)"; \
+		else \
+			echo "  (bin directory not found)"; \
 		fi; \
-	done
-	@echo "$(GREEN)✓ All distribution packages created in ./dist/$(RESET)"
-
-# =============================================================================
-# Infrastructure Management
-# =============================================================================
-
-.PHONY: infra-up
-infra-up: ## Start all infrastructure (Kafka, databases, etc.)
-	@echo "$(BLUE)Starting infrastructure...$(RESET)"
-	@echo "$(YELLOW)Starting Kafka infrastructure...$(RESET)"
-	@$(MAKE) -C $(KAFKA_DIR) docker-up
-	@$(MAKE) -C $(KAFKA_DIR) kafka-topics-create
-	@echo "$(GREEN)✓ Infrastructure started$(RESET)"
-
-.PHONY: infra-down
-infra-down: ## Stop all infrastructure
-	@echo "$(BLUE)Stopping infrastructure...$(RESET)"
-	@$(MAKE) -C $(KAFKA_DIR) docker-down
-	@echo "$(GREEN)✓ Infrastructure stopped$(RESET)"
-
-.PHONY: infra-status
-infra-status: ## Check infrastructure status
-	@echo "$(BLUE)Checking infrastructure status...$(RESET)"
-	@$(MAKE) -C $(KAFKA_DIR) kafka-status
-
-# =============================================================================
-# Service Management (Host) Targets
-# =============================================================================
-
-.PHONY: host
-host: build infra-up start-all ## Build and start all services in background (crash-safe)
-	@echo "$(GREEN)✓ All services hosted successfully$(RESET)"
-	@echo ""
-	@echo "$(CYAN)Services Status:$(RESET)"
-	@$(MAKE) status
-
-.PHONY: start-all
-start-all: ## Start all services in background
-	@echo "$(BLUE)Starting all services...$(RESET)"
-	@echo "$(YELLOW)Starting database service...$(RESET)"
-	@$(MAKE) -C $(DB_SQL_DIR) start
-	@echo "$(YELLOW)Starting gRPC service...$(RESET)"
-	@$(MAKE) -C $(GRPC_DIR) start
-	@echo "$(YELLOW)Starting Kafka services...$(RESET)"
-	@$(MAKE) -C $(KAFKA_DIR) start-all
-	@echo "$(YELLOW)Starting HTTP REST service...$(RESET)"
-	@$(MAKE) -C $(HTTP_DIR) start
-	@echo "$(GREEN)✓ All services started$(RESET)"
-
-.PHONY: stop-all
-stop-all: ## Stop all services
-	@echo "$(BLUE)Stopping all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Stopping $$service...$(RESET)"; \
-		$(MAKE) -C $$service stop; \
-	done
-	@echo "$(GREEN)✓ All services stopped$(RESET)"
-
-.PHONY: restart-all
-restart-all: stop-all start-all ## Restart all services
-	@echo "$(GREEN)✓ All services restarted$(RESET)"
-
-.PHONY: status
-status: ## Check status of all services
-	@echo "$(BLUE)Checking status of all services...$(RESET)"
-	@echo ""
-	@for service in $(SERVICES); do \
-		echo "$(CYAN)=== $$service ===$(RESET)"; \
-		$(MAKE) -C $$service status; \
 		echo ""; \
 	done
 
-# =============================================================================
-# Development Targets
-# =============================================================================
+stop:
+	@echo "Stopping all services..."
+	@cd db-sql-multi && make stop 2>/dev/null || true
+	@cd grpc-svc && make stop 2>/dev/null || true
+	@cd http-rest && make stop 2>/dev/null || true
+	@cd kafka-segmentio && make stop 2>/dev/null || true
+	@docker compose -f docker-compose-simple.yml down
+	@echo "All services stopped!"
 
-.PHONY: run
-run: ## Run all services locally (foreground, requires multiple terminals)
-	@echo "$(BLUE)To run all services locally, use multiple terminals:$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)Terminal 1 - Database Service:$(RESET)"
-	@echo "  make -C $(DB_SQL_DIR) run"
-	@echo ""
-	@echo "$(YELLOW)Terminal 2 - gRPC Service:$(RESET)"
-	@echo "  make -C $(GRPC_DIR) run"
-	@echo ""
-	@echo "$(YELLOW)Terminal 3 - Kafka Consumer:$(RESET)"
-	@echo "  make -C $(KAFKA_DIR) run-consumer"
-	@echo ""
-	@echo "$(YELLOW)Terminal 4 - Kafka Producer:$(RESET)"
-	@echo "  make -C $(KAFKA_DIR) run-producer"
-	@echo ""
-	@echo "$(YELLOW)Terminal 5 - HTTP REST Service:$(RESET)"
-	@echo "  make -C $(HTTP_DIR) run"
-	@echo ""
-	@echo "$(CYAN)Or use 'make host' to run all in background$(RESET)"
-
-.PHONY: test
-test: ## Run tests for all services
-	@echo "$(BLUE)Running tests for all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Testing $$service...$(RESET)"; \
-		$(MAKE) -C $$service test; \
-	done
-	@echo "$(GREEN)✓ All tests completed$(RESET)"
-
-.PHONY: fmt
-fmt: ## Format code for all services
-	@echo "$(BLUE)Formatting code for all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Formatting $$service...$(RESET)"; \
-		$(MAKE) -C $$service fmt; \
-	done
-	@echo "$(GREEN)✓ All code formatted$(RESET)"
-
-.PHONY: lint
-lint: ## Run linter for all services
-	@echo "$(BLUE)Running linter for all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Linting $$service...$(RESET)"; \
-		$(MAKE) -C $$service lint; \
-	done
-	@echo "$(GREEN)✓ All linting completed$(RESET)"
-
-# =============================================================================
-# Monitoring and Health Checks
-# =============================================================================
-
-.PHONY: health
-health: ## Check health of all services
-	@echo "$(BLUE)Checking health of all services...$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)Database Service ($(DB_SQL_PORT)):$(RESET)"
-	@$(MAKE) -C $(DB_SQL_DIR) health || echo "$(RED)✗ Database service unhealthy$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)gRPC Service ($(GRPC_PORT)):$(RESET)"
-	@$(MAKE) -C $(GRPC_DIR) health || echo "$(RED)✗ gRPC service unhealthy$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)HTTP REST Service ($(HTTP_PORT)):$(RESET)"
-	@$(MAKE) -C $(HTTP_DIR) health || echo "$(RED)✗ HTTP service unhealthy$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)Kafka Services:$(RESET)"
-	@$(MAKE) -C $(KAFKA_DIR) health || echo "$(RED)✗ Kafka services unhealthy$(RESET)"
-
-.PHONY: logs
-logs: ## Show logs from all services
-	@echo "$(BLUE)Showing logs from all services...$(RESET)"
-	@echo "$(YELLOW)Use Ctrl+C to stop$(RESET)"
-	@echo ""
-	@tail -f \
-		$(DB_SQL_DIR)/logs/*.log \
-		$(GRPC_DIR)/logs/*.log \
-		$(HTTP_DIR)/logs/*.log \
-		$(KAFKA_DIR)/logs/*.log \
-		2>/dev/null || echo "$(YELLOW)Some log files may not exist yet$(RESET)"
-
-.PHONY: ports
-ports: ## Show all service ports and endpoints
-	@echo "$(CYAN)Service Ports and Endpoints:$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)Database Service:$(RESET)"
-	@echo "  Port: $(DB_SQL_PORT)"
-	@echo "  Health: http://localhost:$(DB_SQL_PORT)/health"
-	@echo ""
-	@echo "$(YELLOW)gRPC Service:$(RESET)"
-	@echo "  Port: $(GRPC_PORT)"
-	@echo "  Test: grpcurl -plaintext localhost:$(GRPC_PORT) list"
-	@echo ""
-	@echo "$(YELLOW)HTTP REST Service:$(RESET)"
-	@echo "  Port: $(HTTP_PORT)"
-	@echo "  Health: http://localhost:$(HTTP_PORT)/health"
-	@echo "  API: http://localhost:$(HTTP_PORT)/books"
-	@echo ""
-	@echo "$(YELLOW)Kafka Producer:$(RESET)"
-	@echo "  Port: $(KAFKA_PRODUCER_PORT)"
-	@echo "  Trigger: http://localhost:$(KAFKA_PRODUCER_PORT)/trigger-produce"
-	@echo ""
-	@echo "$(YELLOW)Kafka Consumer:$(RESET)"
-	@echo "  Running in background (check logs)"
-
-.PHONY: ps
-ps: ## Show running processes for all services
-	@echo "$(BLUE)Checking running processes...$(RESET)"
-	@echo ""
-	@./check-services.sh 2>/dev/null || echo "$(YELLOW)check-services.sh not found or not executable$(RESET)"
-
-# =============================================================================
-# Utility Targets
-# =============================================================================
-
-.PHONY: clean
-clean: ## Clean build artifacts for all services
-	@echo "$(BLUE)Cleaning all services...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Cleaning $$service...$(RESET)"; \
-		$(MAKE) -C $$service clean; \
-	done
-	@rm -rf dist
-	@echo "$(GREEN)✓ All services cleaned$(RESET)"
-
-.PHONY: clean-all
-clean-all: stop-all infra-down clean ## Stop everything and clean all artifacts
-	@echo "$(GREEN)✓ Complete cleanup finished$(RESET)"
-
-.PHONY: install
-install: ## Install all service binaries to GOPATH/bin
-	@echo "$(BLUE)Installing all service binaries...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Installing $$service...$(RESET)"; \
-		$(MAKE) -C $$service install; \
-	done
-	@echo "$(GREEN)✓ All binaries installed$(RESET)"
-
-.PHONY: uninstall
-uninstall: ## Remove all service binaries from GOPATH/bin
-	@echo "$(BLUE)Uninstalling all service binaries...$(RESET)"
-	@for service in $(SERVICES); do \
-		echo "$(YELLOW)Uninstalling $$service...$(RESET)"; \
-		$(MAKE) -C $$service uninstall; \
-	done
-	@echo "$(GREEN)✓ All binaries uninstalled$(RESET)"
-
-# =============================================================================
-# Quick Start Targets
-# =============================================================================
-
-.PHONY: quick-start
-quick-start: ## Quick start: setup infrastructure and host all services
-	@echo "$(CYAN)Quick Start - APM Examples$(RESET)"
-	@echo ""
-	@echo "$(BLUE)Step 1: Setting up infrastructure...$(RESET)"
-	@$(MAKE) infra-up
-	@echo ""
-	@echo "$(BLUE)Step 2: Building all services...$(RESET)"
-	@$(MAKE) build
-	@echo ""
-	@echo "$(BLUE)Step 3: Starting all services...$(RESET)"
-	@$(MAKE) start-all
-	@echo ""
-	@echo "$(GREEN)✓ Quick start completed!$(RESET)"
-	@echo ""
-	@$(MAKE) ports
-	@echo ""
-	@echo "$(CYAN)Next steps:$(RESET)"
-	@echo "  $(GREEN)make health$(RESET)     - Check service health"
-	@echo "  $(GREEN)make status$(RESET)     - Check service status"
-	@echo "  $(GREEN)make logs$(RESET)       - View service logs"
-	@echo "  $(GREEN)make stop-all$(RESET)   - Stop all services"
-
-.PHONY: demo
-demo: quick-start ## Run quick start and show demo commands
-	@echo ""
-	@echo "$(CYAN)Demo Commands:$(RESET)"
-	@echo ""
-	@echo "$(YELLOW)Test HTTP REST API:$(RESET)"
-	@echo "  curl http://localhost:$(HTTP_PORT)/books"
-	@echo ""
-	@echo "$(YELLOW)Test Kafka Producer:$(RESET)"
-	@echo "  curl http://localhost:$(KAFKA_PRODUCER_PORT)/trigger-produce"
-	@echo ""
-	@echo "$(YELLOW)Test gRPC Service:$(RESET)"
-	@echo "  grpcurl -plaintext localhost:$(GRPC_PORT) list"
-	@echo ""
-	@echo "$(YELLOW)Check Database Service:$(RESET)"
-	@echo "  curl http://localhost:$(DB_SQL_PORT)/health"
-
-# =============================================================================
-# Documentation
-# =============================================================================
-
-.PHONY: readme
-readme: ## Show project README information
-	@if [ -f README.md ]; then \
-		echo "$(BLUE)Project README:$(RESET)"; \
-		head -20 README.md; \
-		echo "$(YELLOW)...$(RESET)"; \
-		echo "$(CYAN)See README.md for complete documentation$(RESET)"; \
-	else \
-		echo "$(YELLOW)README.md not found$(RESET)"; \
-	fi
-
-# Default target
-.DEFAULT_GOAL := help
+clean: stop
+	@echo "Cleaning everything..."
+	@cd db-sql-multi && make clean 2>/dev/null || true
+	@cd grpc-svc && make clean 2>/dev/null || true
+	@cd http-rest && make clean 2>/dev/null || true
+	@cd kafka-segmentio && make clean 2>/dev/null || true
+	@docker compose -f docker-compose-simple.yml down -v
+	@echo "Everything cleaned!"
