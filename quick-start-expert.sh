@@ -197,7 +197,7 @@ CONFLICTS=()
 for port in "${SERVICE_PORTS[@]}"; do
     if command_exists lsof && lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
         # Check if it's our own service
-        local process=$(lsof -Pi :$port -sTCP:LISTEN | tail -n1 | awk '{print $1}')
+        process=$(lsof -Pi :$port -sTCP:LISTEN | tail -n1 | awk '{print $1}')
         if [[ ! "$process" =~ (db-sql-multi|grpc-server|http-rest|kafka-producer) ]]; then
             CONFLICTS+=("$port:$process")
         fi
