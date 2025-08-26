@@ -255,20 +255,22 @@ for service in "${SERVICES[@]}"; do
     if [ -d "services/$service" ]; then
         make -C "services/$service" host
 
-        # Verify service health
+        # Verify service health using actual working endpoints
         case $service in
             "db-sql-multi")
-                wait_for_service "$service" "curl -f -s http://localhost:8081/health" 30
+                wait_for_service "$service" "curl -f -s http://localhost:8081/trigger-crud" 30
                 ;;
             "grpc-svc")
                 wait_for_service "$service gRPC" "nc -z localhost 50051" 30
-                wait_for_service "$service HTTP" "curl -f -s http://localhost:8083/health" 30
+                # Start gRPC client HTTP interface
+                cd services/grpc-svc && nohup ./bin/grpc-client > logs/grpc-client.log 2>&1 & cd ../..
+                wait_for_service "$service HTTP" "curl -f -s http://localhost:8083/trigger-stream" 30
                 ;;
             "http-rest")
-                wait_for_service "$service" "curl -f -s http://localhost:8084/health" 30
+                wait_for_service "$service" "curl -f -s http://localhost:8084/trigger/allservices" 30
                 ;;
             "kafka-segmentio")
-                wait_for_service "$service" "curl -f -s http://localhost:8082/health" 30
+                wait_for_service "$service" "curl -f -s http://localhost:8082/trigger-produce" 30
                 ;;
         esac
 
