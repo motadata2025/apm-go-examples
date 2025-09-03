@@ -124,7 +124,7 @@ docker-up: ## Start Kafka infrastructure with Docker Compose
 docker-down: ## Stop Kafka infrastructure
 	@echo "$(BLUE)Stopping Kafka infrastructure...$(RESET)"
 	@if [ -f docker-compose.yml ]; then \
-		docker compose down; \
+		docker compose down -v; \
 		echo "$(GREEN)✓ Kafka infrastructure stopped$(RESET)"; \
 	else \
 		echo "$(YELLOW)docker-compose.yml not found$(RESET)"; \

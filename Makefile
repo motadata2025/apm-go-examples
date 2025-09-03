@@ -329,7 +329,7 @@ stop:
 	@cd grpc-svc && make stop 2>/dev/null || true
 	@cd http-rest && make stop 2>/dev/null || true
 	@cd kafka-segmentio && make stop 2>/dev/null || true
-	@docker compose -f docker-compose-simple.yml down
+	@docker compose -f docker-compose-simple.yml down -v
 	@echo "All services stopped!"
 
 # Stop development builds

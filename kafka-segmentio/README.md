@@ -150,7 +150,7 @@ INFO payment key=pay-1 order=O-1001
 To stop Kafka:
 
 ```bash
-docker compose down
+docker compose down -v
 ```
 
 ---
